@@ -1,0 +1,92 @@
+﻿
+@{
+    ViewBag.Title = "DataVis";
+    Layout = null;
+}
+
+<h2>DataVis</h2>
+
+<!doctype html>
+<html>
+<head>
+    @*<script src="https://d3js.org/d3.v6.min.js"></script>*@
+    <script src="~/Scripts/d3.v6.min.js"></script>
+    <style>
+        svg rect {
+            fill: orange;
+        }
+
+        svg text {
+            fill: white;
+            font: 10px sans-serif;
+            text-anchor: end;
+        }
+
+        svg tick {
+            fill: white;
+            font: 10px sans-serif;
+            text-anchor: end;
+        }
+        
+        svg path {
+            fill: white;
+            font: 10px sans-serif;
+            text-anchor: end;
+        }
+    </style>
+
+
+</head>
+
+
+<body>
+    <script>
+        var width = 500,
+            height = 100;
+
+        var data = [0, 10, 15, 20, 25, 30];
+
+        // Append SVG
+        var svg = d3.select("body")
+            .append("svg")
+            .attr("width", width)
+            .attr("height", height);
+
+        // Create scale
+        var scale = d3.scaleLinear()
+            .domain([d3.min(data)-10, d3.max(data)])
+            .range([-10, width]);
+
+        // Add scales to axis
+        var x_axis = d3.axisBottom()
+            .scale(scale);
+
+        //Append group and insert axis
+        svg.append("g")
+            .call(x_axis);
+
+    </script>
+
+    @*<script>
+        var width = 400, height = 400;
+
+        var data = [10, 15, 20, 25, 30];
+        var svg = d3.select("body")
+            .append("svg")
+            .attr("width", width)
+            .attr("height", height);
+
+        var scale = d3.scaleLinear()
+            .domain([d3.min(data), d3.max(data)])
+            .range([height / 2, 0]);
+
+        var y_axis = d3.axisLeft()
+            .scale(scale);
+
+        svg.append("g")
+            .attr("transform", "translate(50, 10)")
+            .call(y_axis);
+
+    </script>*@
+</body>
+</html>
