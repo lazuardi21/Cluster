@@ -28,5 +28,19 @@ namespace WebApplication1.Controllers
 
             return View();
         }
+
+        public ActionResult Population()
+        {
+            ViewBag.Title = "Population";
+
+            return View();
+        }
+
+        public ActionResult VisPop()
+        {
+            ViewBag.Title = "VisPop";
+
+            return View();
+        }
     }
 }

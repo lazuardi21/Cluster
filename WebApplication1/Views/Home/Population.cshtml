@@ -1,0 +1,73 @@
+﻿
+@{
+    ViewBag.Title = "Population";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Population</h2>
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title>
+    <style type="text/css">
+        body {
+            font-family: Arial;
+            font-size: 10pt;
+        }
+    </style>
+</head>
+<body>
+    <div style="width: 500px">
+        <table id="tblCustomers" cellpadding="0" cellspacing="0" border="1" style="border-collapse:collapse">
+            <thead>
+                <tr>
+                    <th>CityId</th>
+                    <th>CityName</th>
+                    <th>Population</th>
+                   
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js" defer></script>
+    <link href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript">
+        var apiBaseUrl = "https://localhost:44375/";
+        $(function () {
+            $.ajax({
+                type: "GET",
+                url: apiBaseUrl + 'api/POPULATION',
+                data: '{}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: OnSuccess,
+                failure: function (response) {
+                    alert(response.d);
+                },
+                error: function (response) {
+                    alert(response.d);
+                }
+            });
+        });
+        function OnSuccess(response) {
+            $("#tblCustomers").DataTable(
+                {
+                    bLengthChange: true,
+                    lengthMenu: [[5, 10, -1], [5, 10, "All"]],
+                    bFilter: true,
+                    bSort: true,
+                    bPaginate: true,
+                    data: response,
+                    columns: [{ 'data': 'CityID' },
+                        { 'data': 'CityName' },
+                        { 'data': 'Population' }]
+                });
+        };
+    </script>
+</body>
+</html>

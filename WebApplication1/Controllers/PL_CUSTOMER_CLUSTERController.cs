@@ -32,6 +32,15 @@ namespace Cluster.Controller
 			return list.AsQueryable();
 		}
 
+		[Route("api/POPULATION")]
+		[HttpGet]
+		public IQueryable<PL_CUSTOMER_CLUSTER2> GetPopulation()
+		{
+			PL_CUSTOMER_CLUSTERRepository rep = new PL_CUSTOMER_CLUSTERRepository(connectionString);
+			List<PL_CUSTOMER_CLUSTER2> list = rep.GetPopulation();
+			return list.AsQueryable();
+		}
+
 		[Route("api/PL_CUSTOMER_CLUSTER/ID/{id}")]
 		[HttpGet]
 		public IQueryable<PL_CUSTOMER_CLUSTER> GetByID(int id)

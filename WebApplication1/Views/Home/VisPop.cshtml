@@ -1,0 +1,96 @@
+﻿
+@{
+    ViewBag.Title = "VisPop";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>VisPop</h2>
+
+<!doctype html>
+<html>
+<head>
+    <title>Pie Chart Example</title>
+    <script src="~/Scripts/d3.v6.min.js"></script>
+    @*<script src="~/Scripts/d3/d3.js" defer></script>*@
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <style>
+        svg rect {
+            fill: orange;
+        }
+
+        svg text {
+            fill: white;
+            font: 10px sans-serif;
+            text-anchor: end;
+        }
+    </style>
+</head>
+    <body>
+        <div>
+            <svg width="600" height="500"></svg>
+        </div>
+        
+        <script>
+
+            var apiBaseUrl = "https://localhost:44375/";
+            $(function () {
+                var chartData = [];
+                var colors = ["#013ADF", "#ACFA58", "#DF3A01", "#6b486b", "#a05d56"];
+                debugger
+                $.ajax({
+                    type: "GET",
+                    url: apiBaseUrl + 'api/POPULATION',
+                    data: '{}',
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (result) {
+                        $.each(result, function (i, j) {
+                            chartData.push(j.Population);
+                        });
+                        console.log(chartData);
+
+                        var radius = 120;
+                       
+
+                        var area = d3.select('div').append('svg')
+                            .attr('width', 600)
+                            .attr('height', 600);
+
+                        var pieGroup = area.append('g').attr('transform', 'translate(400, 300)');
+                        var arc = d3.arc()
+                            .innerRadius(40)
+                            .outerRadius(radius)
+            
+
+                        var pie = d3.pie()
+                            .value(function (data) { return data; })
+                        var arcs = pieGroup.selectAll('.arc')
+                            .data(pie(chartData))
+                            .enter()
+                            .append('g')
+                            .attr('class', 'arc');
+
+                        arcs.append('path')
+                            .attr('d', arc)
+                            .attr('fill', function (d, i) {
+                                
+                                    return colors[i]
+                                
+                            })
+                            .attr("stroke", "white")
+                            .attr("stroke-width", 0.5);
+
+                        arcs.append('text')
+                            .attr('transform', function (data) { return 'translate(' + arc.centroid(data) + ')'; })
+                            .attr('text-anchor', 'middle')
+                            .attr('font-size', '1em')
+                            .text(function (data) { return data.data; });
+                    },
+                    error: function (msg) {
+                        $("#result").text(msg);
+                    }
+                });
+            });
+        </script>
+    </body>
+</html>

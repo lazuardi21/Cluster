@@ -185,7 +185,7 @@ namespace Cluster.Repositories
 				try
 				{
 					conn.Open();
-					SqlCommand command = new SqlCommand("SELECT [ID], [DATE_STAMP], [IDREFPELANGGAN], [HOUR_NUM], [CLUSTER_NUM], [FDVC_NORMALIZED] FROM PL_CUSTOMER_CLUSTER WHERE [IDREFPELANGGAN] LIKE '%CENTROID%'", conn);
+					SqlCommand command = new SqlCommand("SELECT TOP (168) [ID], [DATE_STAMP], [IDREFPELANGGAN], [HOUR_NUM], [CLUSTER_NUM], [FDVC_NORMALIZED] FROM PL_CUSTOMER_CLUSTER WHERE [IDREFPELANGGAN] LIKE '%CENTROID_ID0%'", conn);
 					SqlDataReader reader = command.ExecuteReader();
 					PL_CUSTOMER_CLUSTER item = new PL_CUSTOMER_CLUSTER();
 					while (reader.Read())
@@ -207,6 +207,38 @@ namespace Cluster.Repositories
 			}
 			return items;
 		}
+
+
+		public List<PL_CUSTOMER_CLUSTER2> GetPopulation()
+		{
+			List<PL_CUSTOMER_CLUSTER2> items = new List<PL_CUSTOMER_CLUSTER2>();
+			using (var conn = new SqlConnection(connString))
+			{
+				Message = "";
+				try
+				{
+					conn.Open();
+					SqlCommand command = new SqlCommand("SELECT TOP (100) [CityID],[CityName],[Population] FROM[SIPG].[dbo].[CityPopulationTable]", conn);
+					SqlDataReader reader = command.ExecuteReader();
+					PL_CUSTOMER_CLUSTER2 item = new PL_CUSTOMER_CLUSTER2();
+					while (reader.Read())
+					{
+						item = new PL_CUSTOMER_CLUSTER2();
+						if (reader[0] != DBNull.Value) { item.CityID = Convert.ToInt32(reader[0]); }
+						if (reader[1] != DBNull.Value) { item.CityName = Convert.ToString(reader[1]); }
+						if (reader[2] != DBNull.Value) { item.Population = Convert.ToInt32(reader[2]); }
+						
+						items.Add(item);
+					}
+				}
+				catch (Exception ex)
+				{
+					Message = ex.Message;
+				}
+			}
+			return items;
+		}
+
 
 		public List<PL_CUSTOMER_CLUSTER> GetDataByID(int ID)
 		{

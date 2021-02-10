@@ -1,7 +1,7 @@
 ﻿
 @{
     ViewBag.Title = "DataVis";
-    Layout = null;
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <h2>DataVis</h2>
@@ -9,8 +9,8 @@
 <!doctype html>
 <html>
 <head>
-    @*<script src="https://d3js.org/d3.v6.min.js"></script>*@
     <script src="~/Scripts/d3.v6.min.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
     <style>
         svg rect {
             fill: orange;
@@ -21,72 +21,91 @@
             font: 10px sans-serif;
             text-anchor: end;
         }
-
-        svg tick {
-            fill: white;
-            font: 10px sans-serif;
-            text-anchor: end;
-        }
-        
-        svg path {
-            fill: white;
-            font: 10px sans-serif;
-            text-anchor: end;
-        }
     </style>
-
-
 </head>
+    <body>
+        <svg width="600" height="500"></svg>
+        <script>
+
+            var svg = d3.select("svg"),
+                margin = 200,
+                width = svg.attr("width") - margin,
+                height = svg.attr("height") - margin;
 
 
-<body>
-    <script>
-        var width = 500,
-            height = 100;
+            var xScale = d3.scaleBand().range([0, width]).padding(0.4),
+                yScale = d3.scaleLinear().range([height, 0]);
 
-        var data = [0, 10, 15, 20, 25, 30];
+            var g = svg.append("g")
+                .attr("transform", "translate(" + 100 + "," + 100 + ")");
 
-        // Append SVG
-        var svg = d3.select("body")
-            .append("svg")
-            .attr("width", width)
-            .attr("height", height);
+            var apiBaseUrl = "https://localhost:44375/";
 
-        // Create scale
-        var scale = d3.scaleLinear()
-            .domain([d3.min(data)-10, d3.max(data)])
-            .range([-10, width]);
+            
 
-        // Add scales to axis
-        var x_axis = d3.axisBottom()
-            .scale(scale);
+            $(function () {
+                $.ajax({
+                    type: "GET",
+                    url: apiBaseUrl + 'api/PL_CUSTOMER_CLUSTER_CENTROID',
+                    data: '{}',
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: make_graph,
+                    failure: function (response) {
+                        alert(response.d);
+                    },
+                    error: function (response) {
+                        alert(response.d);
+                    }
+                });
+            });
 
-        //Append group and insert axis
-        svg.append("g")
-            .call(x_axis);
+            function type(d) {
+                d.etd = +d.etd;
+                d.count = +d.count;
+                return d;
+            }
 
-    </script>
 
-    @*<script>
-        var width = 400, height = 400;
+            function make_graph(response) {
+                console.log(response)
+                var myJsonString = JSON.stringify(response);
+                var url = apiBaseUrl + 'api/PL_CUSTOMER_CLUSTER_CENTROID';
+                d3.xml("https://localhost:44375/api/PL_CUSTOMER_CLUSTER_CENTROID", function (error, data) {
+                    if (error) {
+                        throw error;
+                    }
+                    else {
+                        console.log(xml.documentElement.getElementsByTagName("ID", ""));
+                    }
+                    
+                    });
 
-        var data = [10, 15, 20, 25, 30];
-        var svg = d3.select("body")
-            .append("svg")
-            .attr("width", width)
-            .attr("height", height);
+                    //type, function (error, data) {
+                    //if (error) {
+                    //    throw error;
+                    //}
 
-        var scale = d3.scaleLinear()
-            .domain([d3.min(data), d3.max(data)])
-            .range([height / 2, 0]);
+                    //xScale.domain(data.map(function (d) { return d.year; }));
+                    //yScale.domain([0, d3.max(data, function (d) { return d.value; })]);
 
-        var y_axis = d3.axisLeft()
-            .scale(scale);
+                    //g.append("g")
+                    //    .attr("transform", "translate(0," + height + ")")
+                    //    .call(d3.axisBottom(xScale));
 
-        svg.append("g")
-            .attr("transform", "translate(50, 10)")
-            .call(y_axis);
+                    //g.append("g")
+                    //    .call(d3.axisLeft(yScale).tickFormat(function (d) {
+                    //        return "$" + d;
+                    //    }).ticks(10))
+                    //    .append("text")
+                    //    .attr("y", 6)
+                    //    .attr("dy", "0.71em")
+                    //    .attr("text-anchor", "end")
+                    //    .text("value");
+                //});
 
-    </script>*@
-</body>
+            }
+            
+        </script>
+    </body>
 </html>
