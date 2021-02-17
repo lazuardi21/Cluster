@@ -21,7 +21,12 @@ namespace WebApplication1.Controllers
 
             return View();
         }
+        public ActionResult DataVisExt()
+        {
+            ViewBag.Title = "DataVisExt";
 
+            return View();
+        }
         public ActionResult DataTable()
         {
             ViewBag.Title = "DataTable";
@@ -42,5 +47,48 @@ namespace WebApplication1.Controllers
 
             return View();
         }
+
+        public ActionResult GMSL()
+        {
+            ViewBag.Title = "GMSL";
+
+            return View();
+        }
+
+        public ActionResult VisGMSL()
+        {
+            ViewBag.Title = "VisGMSL";
+
+            return View();
+        }
+        
+        public ActionResult Visline()
+        {
+            ViewBag.Title = "Visline";
+
+            return View();
+        }
+
+        public ActionResult MulineVis()
+        {
+            ViewBag.Title = "MulineVis";
+
+            return View();
+        }
+
+        public ActionResult MulDataVis()
+        {
+            ViewBag.Title = "MulDataVis";
+
+            return View();
+        }
+
+        public ActionResult MulTimeVis()
+        {
+            ViewBag.Title = "MulTimeVis";
+
+            return View();
+        }
+
     }
 }

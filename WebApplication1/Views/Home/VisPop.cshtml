@@ -36,7 +36,7 @@
             $(function () {
                 var chartData = [];
                 var colors = ["#013ADF", "#ACFA58", "#DF3A01", "#6b486b", "#a05d56"];
-                debugger
+                
                 $.ajax({
                     type: "GET",
                     url: apiBaseUrl + 'api/POPULATION',
@@ -44,6 +44,7 @@
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
                     success: function (result) {
+                        debugger
                         $.each(result, function (i, j) {
                             chartData.push(j.Population);
                         });
@@ -73,9 +74,7 @@
                         arcs.append('path')
                             .attr('d', arc)
                             .attr('fill', function (d, i) {
-                                
                                     return colors[i]
-                                
                             })
                             .attr("stroke", "white")
                             .attr("stroke-width", 0.5);

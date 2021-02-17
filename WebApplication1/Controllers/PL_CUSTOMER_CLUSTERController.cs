@@ -41,6 +41,35 @@ namespace Cluster.Controller
 			return list.AsQueryable();
 		}
 
+		[Route("api/GMSL")]
+		[HttpGet]
+		public IQueryable<PL_CUSTOMER_CLUSTER3> GetGMSL()
+		{
+			PL_CUSTOMER_CLUSTERRepository rep = new PL_CUSTOMER_CLUSTERRepository(connectionString);
+			List<PL_CUSTOMER_CLUSTER3> list = rep.GetGMSL();
+
+			foreach (var data in list)
+			{
+
+				for (var i = 0; i < list.Count; i++)
+				{
+					var a = String.Format("{0:yyyy/mm/dd}", data.DATE_TIME);
+					var b = a;
+					var c = @Convert.ToString(string.Format("{0:dd/MM/yyyy}", data.DATE_TIME));
+					var d = c;
+
+				}
+
+			}
+			
+
+			return list.AsQueryable();
+		}
+
+		
+
+		
+
 		[Route("api/PL_CUSTOMER_CLUSTER/ID/{id}")]
 		[HttpGet]
 		public IQueryable<PL_CUSTOMER_CLUSTER> GetByID(int id)

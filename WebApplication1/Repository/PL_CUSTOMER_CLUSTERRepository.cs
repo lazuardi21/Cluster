@@ -185,7 +185,7 @@ namespace Cluster.Repositories
 				try
 				{
 					conn.Open();
-					SqlCommand command = new SqlCommand("SELECT TOP (168) [ID], [DATE_STAMP], [IDREFPELANGGAN], [HOUR_NUM], [CLUSTER_NUM], [FDVC_NORMALIZED] FROM PL_CUSTOMER_CLUSTER WHERE [IDREFPELANGGAN] LIKE '%CENTROID_ID0%'", conn);
+					SqlCommand command = new SqlCommand("SELECT TOP (10000) [ID], [DATE_STAMP], [IDREFPELANGGAN], [HOUR_NUM], [CLUSTER_NUM], [FDVC_NORMALIZED] FROM PL_CUSTOMER_CLUSTER WHERE [CLUSTER_NUM] LIKE '%0%' ORDER BY DATE_STAMP, IDREFPELANGGAN, HOUR_NUM", conn);
 					SqlDataReader reader = command.ExecuteReader();
 					PL_CUSTOMER_CLUSTER item = new PL_CUSTOMER_CLUSTER();
 					while (reader.Read())
@@ -197,6 +197,37 @@ namespace Cluster.Repositories
 						if (reader[3] != DBNull.Value) { item.HOUR_NUM = Convert.ToInt32(reader[3]); }
 						if (reader[4] != DBNull.Value) { item.CLUSTER_NUM = Convert.ToInt32(reader[4]); }
 						if (reader[5] != DBNull.Value) { item.FDVC_NORMALIZED = Convert.ToDouble(reader[5]); }
+						items.Add(item);
+					}
+				}
+				catch (Exception ex)
+				{
+					Message = ex.Message;
+				}
+			}
+			return items;
+		}
+		
+		public List<PL_CUSTOMER_CLUSTER3> GetGMSL()
+		{
+			List<PL_CUSTOMER_CLUSTER3> items = new List<PL_CUSTOMER_CLUSTER3>();
+			using (var conn = new SqlConnection(connString))
+			{
+				Message = "";
+				try
+				{
+					conn.Open();
+					SqlCommand command = new SqlCommand("SELECT TOP (100) [ID], [DATE_TIME], [OP], [CL] FROM [SIPG].[dbo].[GMSL] ORDER BY DATE_TIME", conn);
+					SqlDataReader reader = command.ExecuteReader();
+					PL_CUSTOMER_CLUSTER3 item = new PL_CUSTOMER_CLUSTER3();
+					while (reader.Read())
+					{
+						item = new PL_CUSTOMER_CLUSTER3();
+						if (reader[0] != DBNull.Value) { item.ID = Convert.ToInt32(reader[0]); }
+						if (reader[1] != DBNull.Value) { item.DATE_TIME = Convert.ToDateTime(reader[1]); }
+						if (reader[2] != DBNull.Value) { item.OP = Convert.ToInt32(reader[2]); }
+						if (reader[3] != DBNull.Value) { item.CL = Convert.ToInt32(reader[3]); }
+						
 						items.Add(item);
 					}
 				}

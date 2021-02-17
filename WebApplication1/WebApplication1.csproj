@@ -166,6 +166,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\GMSL.cs" />
     <Compile Include="Models\Population.cs" />
     <Compile Include="Models\PL_CUSTOMER_CLUSTER.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -213,6 +214,8 @@
     <Content Include="Scripts\d3\LICENSE" />
     <Content Include="Scripts\d3\CHANGES.md" />
     <Content Include="Scripts\d3\API.md" />
+    <Content Include="CSV\Data.csv" />
+    <Content Include="Data.csv" />
     <None Include="Scripts\jquery-3.5.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.5.1.js" />
     <Content Include="Scripts\jquery-3.5.1.min.js" />
@@ -237,6 +240,13 @@
     <Content Include="Views\Home\DataTable.cshtml" />
     <Content Include="Views\Home\Population.cshtml" />
     <Content Include="Views\Home\VisPop.cshtml" />
+    <Content Include="Views\Home\GMSL.cshtml" />
+    <Content Include="Views\Home\VisGMSL.cshtml" />
+    <Content Include="Views\Home\Visline.cshtml" />
+    <Content Include="Views\Home\MulineVis.cshtml" />
+    <Content Include="Views\Home\DataVisExt.cshtml" />
+    <Content Include="Views\Home\MulDataVis.cshtml" />
+    <Content Include="Views\Home\MulTimeVis.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
