@@ -8,6 +8,7 @@
     @Scripts.Render("~/bundles/modernizr")
 </head>
 <body>
+   
     <div class="navbar navbar-inverse navbar-fixed-top">
         <div class="container">
             <div class="navbar-header">
@@ -21,18 +22,23 @@
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
                     <li>@Html.ActionLink("Home", "Index", "Home", new { area = "" }, null)</li>
-                    <li>@Html.ActionLink("API", "Index", "Help", new { area = "" }, null)</li>
-                    <li>@Html.ActionLink("DataVis", "DataVis", "Home", new { area = "" }, null)</li>
+                    @*<li>@Html.ActionLink("API", "Index", "Help", new { area = "" }, null)</li>*@
+                    @*<li>@Html.ActionLink("DataVis", "DataVis", "Home", new { area = "" }, null)</li>*@
                     <li>@Html.ActionLink("DataVisExt", "DataVisExt", "Home", new { area = "" }, null)</li>
                     <li>@Html.ActionLink("DataTable", "DataTable", "Home", new { area = "" }, null)</li>
-                    <li>@Html.ActionLink("Population", "Population", "Home", new { area = "" }, null)</li>
-                    <li>@Html.ActionLink("VisPop", "VisPop", "Home", new { area = "" }, null)</li>
-                    <li>@Html.ActionLink("GMSL", "GMSL", "Home", new { area = "" }, null)</li>
-                    <li>@Html.ActionLink("VisGMSL", "VisGMSL", "Home", new { area = "" }, null)</li>
-                    <li>@Html.ActionLink("Visline", "Visline", "Home", new { area = "" }, null)</li>
-                    <li>@Html.ActionLink("MulineVis", "MulineVis", "Home", new { area = "" }, null)</li>
+                    <li>@Html.ActionLink("DataTable2", "DataTable2", "Home", new { area = "" }, null)</li>
+                    @*<li>@Html.ActionLink("Population", "Population", "Home", new { area = "" }, null)</li>
+                    <li>@Html.ActionLink("VisPop", "VisPop", "Home", new { area = "" }, null)</li>*@
+                    @*<li>@Html.ActionLink("GMSL", "GMSL", "Home", new { area = "" }, null)</li>*@
+                    @*<li>@Html.ActionLink("VisGMSL", "VisGMSL", "Home", new { area = "" }, null)</li>*@
+                    @*<li>@Html.ActionLink("Visline", "Visline", "Home", new { area = "" }, null)</li>
+                    <li>@Html.ActionLink("MulineVis", "MulineVis", "Home", new { area = "" }, null)</li>*@
                     <li>@Html.ActionLink("MulDataVis", "MulDataVis", "Home", new { area = "" }, null)</li>
                     <li>@Html.ActionLink("MulTimeVis", "MulTimeVis", "Home", new { area = "" }, null)</li>
+                    <li>@Html.ActionLink("LineVis", "LineVis", "Home", new { area = "" }, null)</li>
+                    <li>@Html.ActionLink("LineVis2", "LineVis2", "Home", new { area = "" }, null)</li>
+                    <li>@Html.ActionLink("LineVis3", "LineVis3", "Home", new { area = "" }, null)</li>
+                    <li>@Html.ActionLink("LineVis4", "LineVis4", "Home", new { area = "" }, null)</li>
                 </ul>
             </div>
         </div>

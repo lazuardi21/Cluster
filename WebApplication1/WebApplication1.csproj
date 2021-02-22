@@ -167,9 +167,11 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\GMSL.cs" />
+    <Compile Include="Models\PL_CUSTOMER_CLUSTER4.cs" />
     <Compile Include="Models\Population.cs" />
     <Compile Include="Models\PL_CUSTOMER_CLUSTER.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Repository\PL_CUSTOMER_CLUSTERRepository_Part2.cs" />
     <Compile Include="Repository\PL_CUSTOMER_CLUSTERRepository.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -247,6 +249,12 @@
     <Content Include="Views\Home\DataVisExt.cshtml" />
     <Content Include="Views\Home\MulDataVis.cshtml" />
     <Content Include="Views\Home\MulTimeVis.cshtml" />
+    <Content Include="Views\Home\LineVis.cshtml" />
+    <Content Include="Views\Home\LineVis2.cshtml" />
+    <Content Include="Views\Home\LineVis3.cshtml" />
+    <Content Include="Views\Home\DataTable2.cshtml" />
+    <None Include="Views\Home\DataTable3.cshtml" />
+    <Content Include="Views\Home\LineVis4.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

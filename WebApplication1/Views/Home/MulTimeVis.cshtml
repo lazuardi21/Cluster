@@ -39,7 +39,7 @@
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 success: function (data) {
-                    debugger
+                    //debugger
                     //yearData = GetYears(data)
                     //salesData = GetSales(data)
                     //console.log(yearData)
@@ -144,10 +144,10 @@
                                     .call(yAxis)
                                     .append("text")
                                     .attr("transform", "rotate(-90)")
-                                    .attr("y", 6)
+                                    .attr("y", 1)
                                     .attr("dy", ".71em")
                                     .style("text-anchor", "end")
-                                    .text("PFC Level");
+                                    .text("FDVC Normalized");
 
 
                                 // bind data to the lines
@@ -365,7 +365,7 @@
 
                                 legend.append("text")
                                     .attr("class", "legendLabel")
-                                    .attr("x", function (d) { return width + 90; })
+                                    .attr("x", function (d) { return width + 130; })
                                     .attr("y", function (d, i) { return height - 342 + (i * 30); })
                                     .text(function (d) { return d.key; })
                                     .attr("font-size", "11px")
@@ -427,37 +427,16 @@
 
                     }
 
-                    //function GetYears(data) {
-                    //    var result = [];
-                    //    for (var i in data)
-                    //        result.push(data[i].HOUR_NUM.split('T')[0]);
-
-                    //    return result;
-                    //}
-
-                    //function GetSales(data) {
-                    //    var result = [];
-                    //    var min = 0.0;
-                    //    for (var i in data) {
-                    //        if (min > data[i].FDVC_NORMALIZED) {
-                    //            min = data[i].FDVC_NORMALIZED
-                    //        }
-                    //    }
-                    //    result.push(min);
-
-                    //    var max = 0.0;
-                    //    for (var i in data) {
-                    //        if (max < data[i].FDVC_NORMALIZED) {
-                    //            max = data[i].FDVC_NORMALIZED
-                    //        }
-                    //    }
-                    //    result.push(max);
-
-                    //    return result;
-                    //}
-
-                    var chart = multilineChart()
-                        .dimKey(function (d) { return d.IDREFPELANGGAN; });
+                   var chart = multilineChart()
+                       .dimKey(function (d) {
+                           if (d.IDREFPELANGGAN != 'CENTROID_ID0') {
+                               return "C" + d.IDREFPELANGGAN;
+                           }
+                           else {
+                               return d.IDREFPELANGGAN;
+                           }
+                          
+                       });
 
                     d3.select("#chart").datum(data).call(chart);
 

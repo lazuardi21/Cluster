@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Cluster.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -34,6 +35,12 @@ namespace WebApplication1.Controllers
             return View();
         }
 
+        public ActionResult DataTable2()
+        {
+            ViewBag.Title = "DataTable2";
+
+            return View();
+        }
         public ActionResult Population()
         {
             ViewBag.Title = "Population";
@@ -89,6 +96,35 @@ namespace WebApplication1.Controllers
 
             return View();
         }
+        public ActionResult LineVis()
+        {
+            ViewBag.Title = "LineVis";
+
+            return View();
+        }
+        
+        public ActionResult LineVis2()
+        {
+            ViewBag.Title = "LineVis2";
+
+            return View();
+        }
+        
+        public ActionResult LineVis3()
+        {
+            ViewBag.Title = "LineVis3";
+
+            return View();
+        }
+        
+        public ActionResult LineVis4()
+        {
+            ViewBag.Title = "LineVis4";
+
+            return View();
+        }
+
+        
 
     }
 }

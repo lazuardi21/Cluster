@@ -185,7 +185,7 @@ namespace Cluster.Repositories
 				try
 				{
 					conn.Open();
-					SqlCommand command = new SqlCommand("SELECT TOP (10000) [ID], [DATE_STAMP], [IDREFPELANGGAN], [HOUR_NUM], [CLUSTER_NUM], [FDVC_NORMALIZED] FROM PL_CUSTOMER_CLUSTER WHERE [CLUSTER_NUM] LIKE '%0%' ORDER BY DATE_STAMP, IDREFPELANGGAN, HOUR_NUM", conn);
+					SqlCommand command = new SqlCommand("SELECT * FROM [SIPG].[dbo].[PL_CUSTOMER_CLUSTER] WHERE CLUSTER_NUM LIKE '%0%' AND DATE_STAMP = '2020-11-01' AND IDREFPELANGGAN IN ('CENTROID_ID0', '014577739', '0140019647', '014525646','0140019671' , '014517181') ORDER  BY IDREFPELANGGAN, HOUR_NUM", conn);
 					SqlDataReader reader = command.ExecuteReader();
 					PL_CUSTOMER_CLUSTER item = new PL_CUSTOMER_CLUSTER();
 					while (reader.Read())
@@ -207,7 +207,9 @@ namespace Cluster.Repositories
 			}
 			return items;
 		}
+
 		
+
 		public List<PL_CUSTOMER_CLUSTER3> GetGMSL()
 		{
 			List<PL_CUSTOMER_CLUSTER3> items = new List<PL_CUSTOMER_CLUSTER3>();

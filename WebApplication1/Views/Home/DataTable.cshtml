@@ -13,67 +13,511 @@
 <head>
     <meta name="viewport" content="width=device-width" />
     <title>Index</title>
-    <style type="text/css">
-        body {
-            font-family: Arial;
-            font-size: 10pt;
+    <style>
+        svg text {
+            fill: black;
+            font: 12px sans-serif;
+            text-anchor: end;
+        }
+        /* svg g text {
+            fill: black;
+            font: 20px sans-serif;
+            text-anchor: end;
+        }*/
+        chart svg g .legend {
+            overflow: auto;
+            height: 200px;
+            width: 50px;
+        }
+
+        .axis path,
+        .axis line {
+            fill: none;
+            stroke: grey;
+            stroke-width: 1;
+            shape-rendering: crispEdges;
+        }
+
+        .axis path,
+        .axis line {
+            fill: none;
+            stroke: grey;
+            opacity: 0.1;
+            stroke-width: 3px;
         }
     </style>
+
 </head>
 <body>
-    <div style="width: 500px">
-        <table id="tblCustomers" cellpadding="0" cellspacing="0" border="1" style="border-collapse:collapse">
-            <thead>
-                <tr>
-                    <th>Id</th>
-                    <th>DateTime</th>
-                    <th>IdRefPelanggan</th>
-                    <th>Hour</th>
-                    <th>Cluster</th>
-                    <th>FDVC Normalize</th>
-                </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
+    <div style="width: 1000px">
+
+        <span>
+            <label>Year:</label>
+            <select size="1" id="YEAR" class="YEAR" title="" type="select" name="style">
+                <option value="2020" selected>2020</option>
+                <option value="2021">2021</option>
+            </select>
+        </span>
+
+        <span>
+            <label>Month:</label>
+            <select size="1" id="Month" class="Month" title="" type="select" name="style">
+                <option value="January">January</option>
+                <option value="February">February</option>
+                <option value="March">March</option>
+                <option value="April">April</option>
+                <option value="May">May</option>
+                <option value="June">June</option>
+                <option value="July">July</option>
+                <option value="August">August</option>
+                <option value="Seprember">Seprember</option>
+                <option value="October" selected>October</option>
+                <option value="November">November</option>
+                <option value="December">December</option>
+            </select>
+        </span>
+        <label>Cluster:</label>
+        <select size="1" id="Cluster" class="Cluster" title="" type="select" name="style">
+            <option value="0" selected>0</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+        </select>
+        <button id="btn" class="btn-success">load data</button>
+        <div id="chart"></div>
+        <div>
+            <table id="tblCustomers" cellpadding="0" cellspacing="0" border="1" style="border-collapse:collapse">
+                <thead>
+                    <tr>
+                        <th>DATE</th>
+                        <th>Id Ref Pelanggan</th>
+                        <th>Nama Pelanggan</th>
+                        <th>CLUSTER</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
     </div>
-    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
-    <script type="text/javascript" src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js" defer></script>
-    <link href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js" defer></script>
+    <script src="~/Scripts/d3.v6.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.js" charset="utf-8"></script>
+    <link href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.min.css" rel="stylesheet" type="text/css" />
     <script type="text/javascript">
+
+
         var apiBaseUrl = "https://localhost:44375/";
-        $(function () {
-            $.ajax({
-                type: "GET",
-                url: apiBaseUrl + 'api/PL_CUSTOMER_CLUSTER_CENTROID',
-                data: '{}',
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                success: OnSuccess,
-                failure: function (response) {
-                    alert(response.d);
-                },
-                error: function (response) {
-                    alert(response.d);
-                }
+        var cluster = $('#Cluster').val;
+        var month = $('#Month').val;
+        var year = $('#YEAR').val;
+        //var clusterVal = [];
+        $('#Cluster').on('change', function (e) {
+            var optionSelected = $("option:selected", this);
+            var valueSelected = this.value;
+            var clusterVal = this.value;
+        });
+        //var monthVal = [];
+        $('#Month').on('change', function (e) {
+            var optionSelected = $("option:selected", this);
+            var valueSelected = this.value;
+            var monthVal = this.value;
+        });
+        //var yearVal = [];
+        $('#YEAR').on('change', function (e) {
+            var optionSelected = $("option:selected", this);
+            var valueSelected = this.value;
+            var yearVal = this.value;
+        });
+
+        $(document).ready(function () {
+            
+            var colors = ["#ff0000", "#000000"];
+
+            $('#btn').on('click', function () {
+                var clusterVal = document.getElementById("Cluster").value;
+                var monthVal = document.getElementById("Month").value;
+                var yearVal = document.getElementById("YEAR").value;
+                $.ajax({
+                    type: "GET",
+                    cache: false,
+                    async: false,
+                    url: apiBaseUrl + 'api/GetCustomerData/all/' + clusterVal + '/' + monthVal + '/' + yearVal,
+                    data: '{}',
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: OnSuccess,
+                    failure: function (data) {
+                        alert(data.d);
+                    },
+                    error: function (data) {
+                        alert(data.d);
+                    }
+                });
             });
         });
-        function OnSuccess(response) {
-            $("#tblCustomers").DataTable(
-                {
-                    bLengthChange: true,
-                    lengthMenu: [[5, 10, -1], [5, 10, "All"]],
-                    bFilter: true,
-                    bSort: true,
-                    bPaginate: true,
-                    data: response,
-                    columns: [{ 'data': 'ID' },
-                        { 'data': 'DATE_STAMP' },
-                        { 'data': 'IDREFPELANGGAN' },
-                        { 'data': 'HOUR_NUM' },
-                        { 'data': 'CLUSTER_NUM' },
-                        { 'data': 'FDVC_NORMALIZED' }]
-                });
+
+
+        function OnSuccess(data) {
+            console.log(data);
+            debugger
+
+        var chart = multilineChart()
+            .dimKey(function (d) {
+                if (d.NAMA != 'CENTROID_ID0') {
+                    return d.NAMA.replace(/[`~!#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/\s]/gi, '_');
+                }
+                else {
+                    return d.NAMA;
+                }
+
+            });
+
+            d3.select("#chart").datum(data).call(chart);
+
+            chart.dimKey = function (value) {
+                if (!arguments.length) return dimKey;
+                dimKey = value;
+                return chart;
+            };
+
+            return chart;
+
+        }
+
+            function multilineChart() {
+
+                // var dimKey;
+
+                // Set the dimensions of the canvas / graph
+                var margin = { top: 30, right: 200, bottom: 70, left: 50 },
+                    width = 1200 - margin.left - margin.right,
+                    height = 500 - margin.top - margin.bottom;
+
+                // Parse the date / time
+                var parseDate = d3.time.format("%Y-%m-%d").parse;
+                var hoverDate = d3.time.format("%m-%d-%y");
+
+                // Set the ranges
+                var x = d3.scale.linear().range([0, width]);
+                var y = d3.scale.linear().range([height, 0]);
+                var color = d3.scale.category20();
+
+                var xAxis = d3.svg.axis()
+                    .scale(x)
+                    //.tickFormat(d3.time.format("%m-%d"))
+                    .orient("bottom")
+                    .innerTickSize(-height)
+                    .outerTickSize(0)
+                    .tickPadding(10);
+
+                var yAxis = d3.svg.axis()
+                    .scale(y)
+                    .orient("left")
+                    .innerTickSize(-width)
+                    .outerTickSize(0)
+                    .tickPadding(10);
+
+                // Create the tooltip div
+                var tooltipDetail = d3.select("#chart").append("div")
+                    .attr("class", "tooltipDetail")
+                    .style("opacity", 0);
+
+                var tooltipSummary = d3.select("#chart").append("div")
+                    .attr("class", "tooltipSummary")
+                    .style("opacity", 0);
+
+                var svg = d3.select("#chart").append("svg")
+                    .attr("width", width + margin.left + margin.right)
+                    .attr("height", height + margin.top + margin.bottom)
+                    .append("g")
+                    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+                function chart(selection) {
+                    selection.each(function (data) {
+
+                        // clean up data
+                        data.forEach(function (d) {
+                            d.HOUR_NUM = +d.HOUR_NUM;
+                            d.FDVC_NORMALIZED = +d.FDVC_NORMALIZED;
+                            //d.visible = 1;
+                        });
+
+                        // nest data
+                        var nested_data = d3.nest()
+                            .key(function (d) { return dimKey(d); })
+                            .entries(data);
+
+                        nested_data.forEach(function (d) {
+                            d.visible = 1;
+                        });
+
+                        color.domain(data.map(function (d) {
+                            return dimKey(d);
+                        }));
+
+
+                        var line = d3.svg.line()
+                            .interpolate("linear")
+                            .x(function (d) { return x(d.HOUR_NUM); })
+                            .y(function (d) { return y(d.FDVC_NORMALIZED); });
+
+
+                        x.domain(d3.extent(data, function (d) { return d.HOUR_NUM; }));
+                        y.domain(d3.extent(data, function (d) { return d.FDVC_NORMALIZED; }));
+
+                        svg.append("g")
+                            .attr("class", "x axis")
+                            .attr("transform", "translate(0," + height + ")")
+                            .call(xAxis)
+                            .selectAll("text")
+                            .style("text-anchor", "end")
+                            .attr("dx", "-.8em")
+                            .attr("dy", ".15em")
+                            .attr("transform", function (d) {
+                                return "rotate(-65)"
+                            })
+                        svg.append("g")
+                            .append("text")
+                            .attr("transform", "translate(0," + height + ")")
+                            .attr("y", 50)
+                            .attr("x", width / 2)
+                            .style("text-anchor", "middle")
+                            .attr("size", "20px")
+                            .text("Hour");
+
+                        svg.append("g")
+                            .attr("class", "y axis")
+                            .call(yAxis)
+                            .append("text")
+                            .attr("transform", "rotate(-90)")
+                            .attr("y", -50)
+                            .attr("x", -height / 2)
+                            .attr("dy", "0.76em")
+                            .style("text-anchor", "middle")
+                            .attr("size", "20px")
+                            .text("FDVC Normalized");
+
+
+                        // bind data to the lines
+                        var lines = svg.selectAll(".lines")
+                            .data(nested_data)
+                            .enter().append("g")
+                            .attr("class", "lines");
+
+                        // Add the paths for the lines
+                        lines.append("path")
+                            .attr("class", function (d) {
+                                if (d.key != 'CENTROID_ID0') {
+                                    var e = d.key;
+                                    var k = e.replace(/[`~!#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/\s]/gi, '_');
+
+                                    return "line " + k;
+                                }
+                                else {
+                                    var e = "line " + d.key;
+                                    console.log(e);
+                                    return "line " + d.key;
+                                }
+
+                            })
+                            .attr("d", function (d) {
+                                // our inner array is d.values from the nesting
+                                return line(d.values);
+                            })
+                            .style("stroke", function (d, i) {
+                                if (d.key != 'CENTROID_ID0') {
+                                    return colors[1]
+                                }
+                                else {
+                                    return colors[0]
+                                }
+
+                            })
+                            .style("stroke-width", function (d, i) {
+                                if (d.key != 'CENTROID_ID0') {
+                                    return "1px"
+                                }
+                                else {
+                                    return "4px"
+                                }
+
+                            })
+                            .style("opacity", function (d, i) {
+                                if (d.key != 'CENTROID_ID0') {
+                                    return 0.5
+                                }
+                                else {
+                                    return 1
+                                }
+
+                            })
+                            .style("stroke-linejoin", "round")
+                            .style("stroke-linecap", "round")
+                            .attr("fill", "none")
+                            .on("mouseover", function (d) {
+                                // Make the line bold
+                                console.log(this)
+                                d3.select(this).transition()
+                                    .style("stroke-width", function (d, i) {
+                                        if (d.key != 'CENTROID_ID0') {
+                                            return "2px"
+                                        }
+                                        else {
+                                            return "6px"
+                                        }
+
+                                    })
+                                    .style("stroke-linecap", "round")
+                                    .style("stroke-linejoin", "round");
+
+                                // Fade out the other lines
+                                var otherlines = $(".line").not("path." + d.key);
+                                d3.selectAll(otherlines).transition()
+                                    .style("opacity", 0.1)
+                                    .style("stroke-width", function (d, i) {
+                                        if (d.key != 'CENTROID_ID0') {
+                                            return "1px"
+                                        }
+                                        else {
+                                            return "4px"
+                                        }
+                                    })
+                                    .style("stroke-linecap", "round")
+                                    .style("stroke-linejoin", "round")
+                                    .style("stroke", "gray");
+
+
+                                // Show tooltips
+                                tooltipSummary.transition()
+                                    .style("opacity", 0.8);
+                                tooltipSummary
+                                    .html(d.key)
+                                    .style("left", (d3.event.pageX + 10) + "px")
+                                    .style("top", (d3.event.pageY - 25) + "px");
+                            })
+                            .on("mouseout", function (d) {
+                                // Make the line normal again
+                                d3.select(this).transition()
+                                    .style("stroke-width", function (d, i) {
+                                        if (d.key != 'CENTROID_ID0') {
+                                            return "1px"
+                                        }
+                                        else {
+                                            return "4px"
+                                        }
+
+                                    })
+                                    .style("stroke-linecap", "round")
+                                    .style("stroke-linejoin", "round");
+
+
+                                // Make the other lines normal again
+                                var otherlines = $('.line').not("path." + d.key);
+                                d3.selectAll(otherlines).transition()
+                                    .style("opacity", function (d, i) {
+                                        if (d.key != 'CENTROID_ID0') {
+                                            return 0.5
+                                        }
+                                        else {
+                                            return 1
+                                        }
+
+                                    })
+                                    .style("stroke-width", function (d, i) {
+                                        if (d.key != 'CENTROID_ID0') {
+                                            return "1px"
+                                        }
+                                        else {
+                                            return "4px"
+                                        }
+
+                                    })
+                                    .style("stroke", function (d, i) {
+                                        if (d.key != 'CENTROID_ID0') {
+                                            return colors[1]
+                                        }
+                                        else {
+                                            return colors[0]
+                                        }
+
+                                    })
+                                    .style("stroke-linecap", "round")
+                                    .style("stroke-linejoin", "round");
+
+
+                                // Hide the tooltip
+                                tooltipSummary.transition().duration(500).style("opacity", 0);
+                            });
+
+
+                        // Get the maximum Y value
+                        function getMaxY() {
+                            var maxY = -1;
+                            nested_data.forEach(function (d) {
+                                if (d.visible === 1) {
+                                    d.values.forEach(function (d) {
+                                        if (d.FDVC_NORMALIZED > maxY) {
+                                            maxY = d.FDVC_NORMALIZED;
+                                        }
+                                    });
+                                }
+                            });
+                            return maxY;
+                        }
+
+                        // re-scale the Y axis
+                        function rescaleY() {
+                            y.domain([0, getMaxY()]);
+                            svg.select(".y").transition()
+                                .duration(1000).ease("sin-in-out")
+                                .call(yAxis);
+                        }
+
+                        // Helper function for updating the lines after selecting/deselecting on the legend
+                        function updateLines() {
+                            svg.selectAll(".line")
+                                .transition().duration(500)
+                                .delay(function (d, i) { return i * 20; })
+                                .attr("d", function (d) {
+                                    return line(d.values);
+                                });
+                        }
+
+                        function updateCircles() {
+                            svg.selectAll(".circle circle")
+                                .transition().duration(500)
+                                .delay(function (d, i) { return i; })
+                                .attr("cy", function (d, i) { return y(d.FDVC_NORMALIZED) });
+                        }
+
+                    });
+
+                }
+
+                // Get/set the dimension key
+                
+            
+
+            //$("#tblCustomers").DataTable(
+            //    {
+            //        bLengthChange: true,
+            //        lengthMenu: [[5, 10, 50, -1], [5, 10, 50, "All"]],
+            //        bFilter: true,
+            //        bSort: true,
+            //        bPaginate: true,
+            //        destroy: true,
+            //        data: data,
+            //        columns: [{ 'data': 'MONTH' },
+            //        { 'data': 'IDREFPELANGGAN' },
+            //        { 'data': 'NAMA' },
+            //        { 'data': 'CLUSTER_NUM' }]
+            //    });
         };
+
+
     </script>
 </body>
 </html>

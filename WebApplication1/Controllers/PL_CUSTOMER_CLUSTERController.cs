@@ -31,6 +31,42 @@ namespace Cluster.Controller
 			List<PL_CUSTOMER_CLUSTER> list = rep.GetCentroid();
 			return list.AsQueryable();
 		}
+		
+		[Route("api/PL_CUSTOMER_CLUSTER_CENTROID2")]
+		[HttpGet]
+		public IQueryable<PL_CUSTOMER_CLUSTER> GetCentroid2()
+		{
+			PL_CUSTOMER_CLUSTERRepository rep = new PL_CUSTOMER_CLUSTERRepository(connectionString);
+			List<PL_CUSTOMER_CLUSTER> list = rep.GetCentroid2();
+			return list.AsQueryable();
+		}
+		
+		[Route("api/PL_CUSTOMER_CLUSTER_CENTROID3")]
+		[HttpGet]
+		public IQueryable<PL_CUSTOMER_CLUSTER> GetCentroid3()
+		{
+			PL_CUSTOMER_CLUSTERRepository rep = new PL_CUSTOMER_CLUSTERRepository(connectionString);
+			List<PL_CUSTOMER_CLUSTER> list = rep.GetCentroid3();
+			return list.AsQueryable();
+		}
+
+		[Route("api/GETDATAPELANGGAN")]
+		[HttpGet]
+		public IQueryable<PL_CUSTOMER_CLUSTER> GetDataPelanggan()
+		{
+			PL_CUSTOMER_CLUSTERRepository rep = new PL_CUSTOMER_CLUSTERRepository(connectionString);
+			List<PL_CUSTOMER_CLUSTER> list = rep.GetDataPelanggan();
+			return list.AsQueryable();
+		}
+
+		[Route("api/GETDATAPELANGGAN2")]
+		[HttpGet]
+		public IQueryable<PL_CUSTOMER_CLUSTER4> GetDataPelanggan2()
+		{
+			PL_CUSTOMER_CLUSTERRepository rep = new PL_CUSTOMER_CLUSTERRepository(connectionString);
+			List<PL_CUSTOMER_CLUSTER4> list = rep.GetDataPelanggan2();
+			return list.AsQueryable();
+		}
 
 		[Route("api/POPULATION")]
 		[HttpGet]
@@ -67,15 +103,51 @@ namespace Cluster.Controller
 		}
 
 		
-
-		
-
 		[Route("api/PL_CUSTOMER_CLUSTER/ID/{id}")]
 		[HttpGet]
 		public IQueryable<PL_CUSTOMER_CLUSTER> GetByID(int id)
 		{
 			PL_CUSTOMER_CLUSTERRepository rep = new PL_CUSTOMER_CLUSTERRepository(connectionString);
 			List<PL_CUSTOMER_CLUSTER> list = rep.GetDataByID(id);
+			return list.AsQueryable();
+		}
+
+		[Route("api/PL_CUSTOMER_CLUSTER/cluster/{id}")]
+		[HttpGet]
+		public IQueryable<PL_CUSTOMER_CLUSTER> GetClusterByID(int id)
+		{
+			PL_CUSTOMER_CLUSTERRepository rep = new PL_CUSTOMER_CLUSTERRepository(connectionString);
+			List<PL_CUSTOMER_CLUSTER> list = rep.GetClusterByID(id);
+			return list.AsQueryable();
+		}
+		
+		[Route("api/PL_CUSTOMER_CLUSTER/date/{DATE}")]
+		[HttpGet]
+		public IQueryable<PL_CUSTOMER_CLUSTER> GetDateByID(DateTime DATE)
+		{
+			DATE = Convert.ToDateTime(DATE);
+			PL_CUSTOMER_CLUSTERRepository rep = new PL_CUSTOMER_CLUSTERRepository(connectionString);
+			List<PL_CUSTOMER_CLUSTER> list = rep.GetDateByID(DATE);
+			return list.AsQueryable();
+		}
+
+		[Route("api/GetCustomer/all/{id}/{MONTH}/{YEAR}")]
+		[HttpGet]
+		public IQueryable<PL_CUSTOMER_CLUSTER4> GetCustomer(int id, string MONTH, int YEAR)
+		{
+
+			PL_CUSTOMER_CLUSTERRepository rep = new PL_CUSTOMER_CLUSTERRepository(connectionString);
+			List<PL_CUSTOMER_CLUSTER4> list = rep.GetCustomer(id, MONTH, YEAR);
+			return list.AsQueryable();
+		}
+		
+		[Route("api/GetCustomerData/all/{id}/{MONTH}/{YEAR}")]
+		[HttpGet]
+		public IQueryable<PL_CUSTOMER_CLUSTER> GetCustomerData(int id, string MONTH, int YEAR)
+		{
+
+			PL_CUSTOMER_CLUSTERRepository rep = new PL_CUSTOMER_CLUSTERRepository(connectionString);
+			List<PL_CUSTOMER_CLUSTER> list = rep.GetCustomerData(id, MONTH, YEAR);
 			return list.AsQueryable();
 		}
 
