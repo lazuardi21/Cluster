@@ -12,661 +12,581 @@
     <script src="~/Scripts/d3.v6.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.js" charset="utf-8"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js" defer></script>
+    <link href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.min.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js" defer></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js" defer></script>
     <style>
         svg text {
             fill: black;
-            font: 10px sans-serif;
+            font: 12px sans-serif;
             text-anchor: end;
         }
+        /* svg g text {
+            fill: black;
+            font: 20px sans-serif;
+            text-anchor: end;
+        }*/
         chart svg g .legend {
             overflow: auto;
             height: 200px;
             width: 50px;
         }
+
+        .axis path,
+        .axis line {
+            fill: none;
+            stroke: grey;
+            stroke-width: 1;
+            shape-rendering: crispEdges;
+        }
+
+        .axis path,
+        .axis line {
+            fill: none;
+            stroke: grey;
+            opacity: 0.1;
+            stroke-width: 3px;
+        }
     </style>
 </head>
 <body>
-    <span>
-        <label>Month:</label>
-        <select size="1" id="Month" class="inds" title="" type="select" name="style">
-            <option value="">-Select-</option>
-            <option value="1-10-2020">October</option>
-            <option value="1-11-2020">November</option>
-        </select>
-    </span>
-    <span>
-        <label>Year:</label>
-        <select size="1" id="Year" class="style-sub-1" title="" type="select" name="style">
-            <option value="">-Select-</option>
-            <option value="2020">2020</option>
-            <option value="2021">2021</option>
-        </select>
-    </span>
-    <label>Cluster:</label>
-    <select size="1" id="Cluster" class="style-sub-2" title="" type="select" name="style">
-        <option value="">-Select-</option>
-        <option value="0">0</option>
-        <option value="1">1</option>
-        <option value="2">2</option>
-        <option value="3">3</option>
-        <option value="4">4</option>
-    </select>
-    <div id="chart"></div>
+    <div style="width: 1000px">
+        <input type="button" value="Print or Save to Pdf" id="btnPrint" /> Please click on this button to get chart and table on pdf
+        <br />
+        <span>
+            <label>Year:</label>
+            <select size="1" id="YEAR" class="YEAR" title="" type="select" name="style">
+                <option value="2020" selected>2020</option>
+                <option value="2021">2021</option>
+            </select>
+        </span>
+
+        <span>
+            <label>Month:</label>
+            <select size="1" id="Month" class="Month" title="" type="select" name="style">
+                <option value="January">January</option>
+                <option value="February">February</option>
+                <option value="March">March</option>
+                <option value="April">April</option>
+                <option value="May">May</option>
+                <option value="June">June</option>
+                <option value="July">July</option>
+                <option value="August">August</option>
+                <option value="Seprember">Seprember</option>
+                <option value="October" selected>October</option>
+                <option value="November">November</option>
+                <option value="December">December</option>
+            </select>
+        </span>
+        <span>
+
+            <label>Cluster:</label>
+            <select size="1" id="Cluster" class="Cluster" title="" type="select" name="style">
+                <option value="0" selected>0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+            </select>
+        </span>
+        <button id="btn" class="btn-success">load data</button>
+
+    </div>
+    <form id="form1">
+        <div id="chart"></div>
+        <div>
+            <table id="tblCustomers" cellpadding="0" cellspacing="0" border="1" style="border-collapse:collapse" class="display" width="95%">
+                <thead>
+                    <tr>
+                        <th>Month</th>
+                        <th>Year</th>
+                        <th>IdRefPelanggan</th>
+                        <th>Name</th>
+                        <th>Cluster</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </form>
     <script>
         var apiBaseUrl = "https://localhost:44375/";
+        var clusterVal = 0;
+        var monthVal = 'October';
+        var yearVal = 2020;
+        var cluster = $('#Cluster').val;
+        var month = $('#Month').val;
+        var year = $('#YEAR').val;
+        var margin = { top: 30, right: 200, bottom: 70, left: 50 },
+            width = 1200 - margin.left - margin.right,
+            height = 500 - margin.top - margin.bottom;
+        var svg = d3.select("#chart").append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+
+        $('#Cluster').on('change', function (e) {
+            var optionSelected = $("option:selected", this);
+            var valueSelected = this.value;
+            var clusterVal = this.value;
+        });
+        //var monthVal = [];
+        $('#Month').on('change', function (e) {
+            var optionSelected = $("option:selected", this);
+            var valueSelected = this.value;
+            var monthVal = this.value;
+        });
+        //var yearVal = [];
+        $('#YEAR').on('change', function (e) {
+            var optionSelected = $("option:selected", this);
+            var valueSelected = this.value;
+            var yearVal = this.value;
+        });
+
+
+        //var clusterVal = [];
         $(function () {
-            var colors = ["#ff0000", "#000000"];
-            $.ajax({
-                type: "GET",
-                url: apiBaseUrl + 'api/PL_CUSTOMER_CLUSTER_CENTROID',
-                data: '{}',
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                success: function (data) {
-                    debugger
-                    //yearData = GetYears(data)
-                    //salesData = GetSales(data)
-                    //console.log(yearData)
-                    //console.log(salesData)
-                    //$.each(data, function (d) {
 
-                    //        result.HOUR_NUM = d.HOUR_NUM
-                    //        result.cl = d.cl
-                    //        result.op = d.op
+            $("#tblCustomers").hide();
 
-                    //});
-                    
+            $('#btn').on('click', function () {
+                //d3.selectAll(".svg").remove(); //removes event listeners and unmounts DOM elements
+                //svg = null;
+                d3.selectAll("div svg").remove();
 
-                    function filterJSON(json, key, value) {
-                        var result = [];
-                        for (var foo in json) {
-                            if (json[foo][key] == value) {
-                                result.push(json[foo]);
-                            }
-                        }
-                        return result;
-                    }
+                var clusterVal = document.getElementById("Cluster").value;
+                var monthVal = document.getElementById("Month").value;
+                var yearVal = document.getElementById("YEAR").value;
+                var colors = ["#ff0000", "#000000"];
+                $.ajax({
+                    type: "GET",
+                    url: apiBaseUrl + 'api/GetCustomerData/all/' + clusterVal + '/' + monthVal + '/' + yearVal,
+                    data: '{}',
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (data) {
 
 
-                    //$('.inds')
-                    //    .on("change", function () {
-
-                    //        var Month = $(this).val();
-                    //        //console.log("prod:", Month);
-
-                    //        data = filterJSON(data, 'DATE_STAMP', Month);
-
-                    //        //console.log("data: ", data);
-                    //        multilineChart(data);
 
 
-                    //        //$('.years')
-                    //        //    .on("change", function () {
+                        function multilineChart() {
 
-                    //        //        var yr = $(this).val();
-                    //        //        yr = +yr;
-                    //        //        console.log("yr:", yr);
+                            // var dimKey;
 
-                    //        //        data1 = filterJSON(data, 'year', yr);
+                            // Set the dimensions of the canvas / graph
+                            var margin = { top: 30, right: 200, bottom: 70, left: 50 },
+                                width = 1200 - margin.left - margin.right,
+                                height = 500 - margin.top - margin.bottom;
 
-                    //        //        console.log("data: ", data1);
-                    //        //        multilineChart(data1);
-                    //        //    });
+                            // Parse the date / time
+                            var parseDate = d3.time.format("%Y-%m-%d").parse;
+                            var hoverDate = d3.time.format("%m-%d-%y");
 
-                    //    });
+                            // Set the ranges
+                            var x = d3.scale.linear().range([0, width]);
+                            var y = d3.scale.linear().range([height, 0]);
+                            var color = d3.scale.category20();
 
-                    function multilineChart() {
+                            var xAxis = d3.svg.axis()
+                                .scale(x)
+                                //.tickFormat(d3.time.format("%m-%d"))
+                                .orient("bottom")
+                                .innerTickSize(-height)
+                                .outerTickSize(0)
+                                .tickPadding(10);
 
-                        // var dimKey;
+                            var yAxis = d3.svg.axis()
+                                .scale(y)
+                                .orient("left")
+                                .innerTickSize(-width)
+                                .outerTickSize(0)
+                                .tickPadding(10);
 
-                        // Set the dimensions of the canvas / graph
-                        var margin = { top: 30, right: 200, bottom: 70, left: 50 },
-                            width = 1200 - margin.left - margin.right,
-                            height = 500 - margin.top - margin.bottom;
+                            // Create the tooltip div
+                            var tooltipDetail = d3.select("#chart").append("div")
+                                .attr("class", "tooltipDetail")
+                                .style("opacity", 0);
 
-                        // Parse the date / time
-                        var parseDate = d3.time.format("%Y-%m-%d").parse;
-                        var hoverDate = d3.time.format("%m-%d-%y");
+                            var tooltipSummary = d3.select("#chart").append("div")
+                                .attr("class", "tooltipSummary")
+                                .style("opacity", 0);
 
-                        // Set the ranges
-                        var x = d3.scale.linear().range([0, width]);
-                        var y = d3.scale.linear().range([height, 0]);
-                        var color = d3.scale.category20();
+                            var svg = d3.select("#chart").append("svg")
+                                .attr("width", width + margin.left + margin.right)
+                                .attr("height", height + margin.top + margin.bottom)
+                                .append("g")
+                                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-                        var xAxis = d3.svg.axis()
-                            .scale(x)
-                            //.tickFormat(d3.time.format("%m-%d"))
-                            .orient("bottom");
+                            function chart(selection) {
+                                selection.each(function (data) {
 
-                        var yAxis = d3.svg.axis()
-                            .scale(y)
-                            .orient("left");
-
-                        // Create the tooltip div
-                        var tooltipDetail = d3.select("#chart").append("div")
-                            .attr("class", "tooltipDetail")
-                            .style("opacity", 0);
-
-                        var tooltipSummary = d3.select("#chart").append("div")
-                            .attr("class", "tooltipSummary")
-                            .style("opacity", 0);
-
-                        var svg = d3.select("#chart").append("svg")
-                            .attr("width", width + margin.left + margin.right)
-                            .attr("height", height + margin.top + margin.bottom)
-                            .append("g")
-                            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-                        function chart(selection) {
-                            selection.each(function (data) {
-
-                                // clean up data
-                                data.forEach(function (d) {
-                                    d.HOUR_NUM = +d.HOUR_NUM;
-                                    d.FDVC_NORMALIZED = +d.FDVC_NORMALIZED;
-                                    //d.visible = 1;
-                                });
-
-                                // nest data
-                                var nested_data = d3.nest()
-                                    .key(function (d) { return dimKey(d); })
-                                    .entries(data);
-
-                                nested_data.forEach(function (d) {
-                                    d.visible = 1;
-                                });
-
-                                color.domain(data.map(function (d) {
-                                    return dimKey(d);
-                                }));
-
-
-                                var line = d3.svg.line()
-                                    .interpolate("linear")
-                                    .x(function (d) { return x(d.HOUR_NUM); })
-                                    .y(function (d) { return y(d.FDVC_NORMALIZED); });
-
-
-                                x.domain(d3.extent(data, function (d) { return d.HOUR_NUM; }));
-                                y.domain(d3.extent(data, function (d) { return d.FDVC_NORMALIZED; }));
-
-                                svg.append("g")
-                                    .attr("class", "x axis")
-                                    .attr("transform", "translate(0," + height + ")")
-                                    .call(xAxis)
-                                    .selectAll("text")
-                                    .style("text-anchor", "end")
-                                    .attr("dx", "-.8em")
-                                    .attr("dy", ".15em")
-                                    .attr("transform", function (d) {
-                                        return "rotate(-65)"
+                                    // clean up data
+                                    data.forEach(function (d) {
+                                        d.HOUR_NUM = +d.HOUR_NUM;
+                                        d.FDVC_NORMALIZED = +d.FDVC_NORMALIZED;
+                                        //d.visible = 1;
                                     });
 
-                                svg.append("g")
-                                    .attr("class", "y axis")
-                                    .call(yAxis)
-                                    .append("text")
-                                    .attr("transform", "rotate(-90)")
-                                    .attr("y", 1)
-                                    .attr("dy", ".71em")
-                                    .style("text-anchor", "end")
-                                    .text("FDVC Normalized");
+                                    // nest data
+                                    var nested_data = d3.nest()
+                                        .key(function (d) { return dimKey(d); })
+                                        .entries(data);
 
-
-                                // bind data to the lines
-                                var lines = svg.selectAll(".lines")
-                                    .data(nested_data)
-                                    .enter().append("g")
-                                    .attr("class", "lines");
-
-                                // Add the paths for the lines
-                                lines.append("path")
-                                    .attr("class", function (d) {
-                                        return "line " + d.key;
-                                    })
-                                    .attr("d", function (d) {
-                                        // our inner array is d.values from the nesting
-                                        return line(d.values);
-                                    })
-                                    .style("stroke", function (d, i) {
-                                        if (d.key != 'CENTROID_ID0') {
-                                            return colors[1]
-                                        }
-                                        else {
-                                            return colors[0]
-                                        }
-
-                                    })
-                                    .style("stroke-width", function (d, i) {
-                                        if (d.key != 'CENTROID_ID0') {
-                                            return "1px"
-                                        }
-                                        else {
-                                            return "4px"
-                                        }
-
-                                    })
-                                    .style("opacity", function (d, i) {
-                                        if (d.key != 'CENTROID_ID0') {
-                                            return 0.5
-                                        }
-                                        else {
-                                            return 1
-                                        }
-
-                                    })
-                                    .style("stroke-linejoin", "round")
-                                    .style("stroke-linecap", "round")
-                                    .attr("fill", "none")
-                                    .on("mouseover", function (d) {
-                                        // Make the line bold
-                                        d3.select(this).transition().duration(0.1)
-                                            .style("stroke-width", function (d, i) {
-                                                if (d.key != 'CENTROID_ID0') {
-                                                    return "2px"
-                                                }
-                                                else {
-                                                    return "6px"
-                                                }
-
-                                            })
-                                            .style("stroke-linecap", "round")
-                                            .style("stroke-linejoin", "round");
-                                        //d3.selectAll("circle." + d.key).transition().duration(0.1)
-                                        //    .attr("r", function (d, i) { return 4 })
-
-                                        // Fade out the other lines
-                                        var otherlines = $(".line").not("path." + d.key);
-                                        d3.selectAll(otherlines).transition().duration(0.1)
-                                            .style("opacity", 0.1)
-                                            .style("stroke-width", function (d, i) {
-                                                if (d.key != 'CENTROID_ID0') {
-                                                    return "1px"
-                                                }
-                                                else {
-                                                    return "4px"
-                                                }
-
-                                            })
-                                            .style("stroke-linecap", "round")
-                                            .style("stroke-linejoin", "round")
-                                            .style("stroke", "gray");
-
-                                        //var othercircles = $("circle").not("circle." + d.key);
-                                        //d3.selectAll(othercircles).transition().duration(0.1)
-                                        //    .style("opacity", 0.3)
-                                        //    .style("stroke", "gray");
-
-                                        // Show tooltips
-                                        tooltipSummary.transition().duration(0.1)
-                                            .style("opacity", 0.8);
-                                        tooltipSummary
-                                            .html(d.key)
-                                            .style("left", (d3.event.pageX + 10) + "px")
-                                            .style("top", (d3.event.pageY - 25) + "px");
-                                    })
-                                    .on("mouseout", function (d) {
-                                        // Make the line normal again
-                                        d3.select(this).transition().duration(0.1)
-                                            .style("stroke-width", function (d, i) {
-                                                if (d.key != 'CENTROID_ID0') {
-                                                    return "1px"
-                                                }
-                                                else {
-                                                    return "4px"
-                                                }
-
-                                            })
-                                            .style("stroke-linecap", "round")
-                                            .style("stroke-linejoin", "round");
-
-                                        //d3.selectAll("circle." + d.key).transition().duration(0.1)
-                                        //    .attr("r", function (d, i) { return 2 })
-
-                                        // Make the other lines normal again
-                                        var otherlines = $('.line').not("path." + d.key);
-                                        d3.selectAll(otherlines).transition().duration(0.1)
-                                            .style("opacity", function (d, i) {
-                                                if (d.key != 'CENTROID_ID0') {
-                                                    return 0.5
-                                                }
-                                                else {
-                                                    return 1
-                                                }
-
-                                            })
-                                            .style("stroke-width", function (d, i) {
-                                                if (d.key != 'CENTROID_ID0') {
-                                                    return "1px"
-                                                }
-                                                else {
-                                                    return "4px"
-                                                }
-
-                                            })
-                                            .style("stroke", function (d, i) {
-                                                if (d.key != 'CENTROID_ID0') {
-                                                    return colors[1]
-                                                }
-                                                else {
-                                                    return colors[0]
-                                                }
-
-                                            })
-                                            .style("stroke-linecap", "round")
-                                            .style("stroke-linejoin", "round");
-
-                                        //var othercircles = $("circle").not("circle." + d.key);
-                                        //d3.selectAll(othercircles).transition().duration(0.1)
-                                        //    .style("opacity", 1)
-                                        //    .style("stroke", function (d) { return color(dimKey(d)); });
-
-                                        // Hide the tooltip
-                                        tooltipSummary.transition().duration(500).style("opacity", 0);
-                                    });
-
-                                // bind the data for the circles
-                                //var circles = svg.selectAll(".circle")
-                                //    .data(data)
-                                //    .enter().append("g")
-                                //    .attr("class", "circle");
-
-                                // Add the circles to the lines
-                                //circles.append("circle")
-                                //    .attr("stroke", function (d) { return color(dimKey(d)); })
-                                //    .attr("fill", function (d, i) { return "white" })
-                                //    .attr("cx", function (d, i) { return x(d.HOUR_NUM) })
-                                //    .attr("cy", function (d, i) { return y(d.FDVC_NORMALIZED) })
-                                //    .attr("r", function (d, i) { return 2 })
-                                //    .attr("class", function (d) { return dimKey(d); })
-                                //    .on("mouseover", function (d) {
-
-                                //        d3.select(this).transition().duration(0.1)
-                                //            .attr("r", function (d, i) { return 4 })
-
-                                //        // Show tooltips
-                                //        tooltipDetail.transition().duration(0.1)
-                                //            .style("opacity", 0.8);
-                                //        tooltipDetail
-                                //            .html("<strong>" + dimKey(d) + "</strong><br />" + d.FDVC_NORMALIZED + "<br />" + d.HOUR_NUM )
-                                //            .style("left", (d3.event.pageX + 10) + "px")
-                                //            .style("top", (d3.event.pageY - 25) + "px");
-                                //    })
-                                //    .on("mouseout", function (d) {
-                                //        d3.select(this).transition().duration(0.1)
-                                //            .attr("r", function (d, i) { return 2 })
-
-                                //        // Hide the tooltip
-                                //        tooltipDetail.transition().duration(500).style("opacity", 0);
-                                //    });
-
-                                // bind the data for the legend
-                                //var legend = svg.selectAll(".legend")
-                                //    .data(nested_data)
-                                //    .enter().append("g")
-                                //    .attr("class", "legend")
-                                //    .attr("overflow", "auto")
-                                //    .attr("height", "200px")
-                                //    .attr("width", "50px");
-
-                                // Add the colored legend boxes
-                                //legend.append("rect")
-                                //    .attr("height", 10)
-                                //    .attr("width", 25)
-                                //    .attr("class", function (d) { return d.key; })
-                                //    .attr("x", width + 30)
-                                //    .attr("y", function (d, i) { return height - 350 + (i * 30); })
-                                //    .attr("stroke", function (d, i) {
-                                //        if (d.key != 'CENTROID_ID0') {
-                                //            return colors[1]
-                                //        }
-                                //        else {
-                                //            return colors[0]
-                                //        }
-
-                                //    })
-                                //    .attr("fill", function (d, i) {
-                                //        if (d.key != 'CENTROID_ID0') {
-                                //            return colors[1]
-                                //        }
-                                //        else {
-                                //            return colors[0]
-                                //        }
-
-                                //    })
-                                //    //.on("click", function (d) {
-
-                                //    //    var selectedPath = svg.select("path." + d.key);
-                                //    //    //var totalLength = selectedPath.node().getTotalLength();
-
-                                //    //    if (d.visible === 1) {
-                                //    //        d.visible = 0;
-                                //    //    } else {
-                                //    //        d.visible = 1;
-                                //    //    }
-
-                                //    //    rescaleY();
-                                //    //    updateLines();
-                                //    //    updateCircles();
-
-                                //    //    svg.select("rect." + d.key).transition().duration(500)
-                                //    //        .attr("fill", function (d) {
-                                //    //            if (d.visible === 1) {
-                                //    //                return color(d.key);
-                                //    //            } else {
-                                //    //                return "white";
-                                //    //            }
-                                //    //        })
-
-                                //    //    svg.select("path." + d.key).transition().duration(500)
-                                //    //        .delay(150)
-                                //    //        .style("display", function (d) {
-                                //    //            if (d.visible === 1) {
-                                //    //                return "inline";
-                                //    //            }
-                                //    //            else return "none";
-                                //    //        })
-                                //    //        .attr("d", function (d) {
-                                //    //            return line(d.values);
-                                //    //        });
-
-                                //    //    svg.selectAll("circle." + d.key).transition().duration(500)
-                                //    //        //.delay(function(d, i) { return i * 10; })
-                                //    //        .style("display", function (a) {
-                                //    //            if (d.visible === 1) {
-                                //    //                return "inline";
-                                //    //            }
-                                //    //            else return "none";
-                                //    //        });
-
-
-                                //    //})
-                                //    .on("mouseover", function (d) {
-                                //        d3.select(this)
-                                //            .attr("height", 12)
-                                //            .attr("width", 27)
-
-                                //        d3.select("path." + d.key).transition().duration(0.1)
-                                //            .style("stroke-width", function (d, i) {
-                                //                if (d.key != 'CENTROID_ID0') {
-                                //                    return "2px"
-                                //                }
-                                //                else {
-                                //                    return "6px"
-                                //                }
-
-                                //            })
-                                //            .style("stroke-linecap", "round")
-                                //            .style("stroke-linejoin", "round");
-
-                                //        //d3.selectAll("circle." + d.key).transition().duration(0.1)
-                                //        //    .attr("r", function (d, i) { return 4 })
-
-                                //        // Fade out the other lines
-                                //        var otherlines = $(".line").not("path." + d.key);
-                                //        d3.selectAll(otherlines).transition().duration(0.1)
-                                //            .style("opacity", 0.1)
-                                //            .style("stroke-width", function (d, i) {
-                                //                if (d.key != 'CENTROID_ID0') {
-                                //                    return "1px"
-                                //                }
-                                //                else {
-                                //                    return "4px"
-                                //                }
-
-                                //            })
-                                //            .style("stroke-linecap", "round")
-                                //            .style("stroke-linejoin", "round")
-                                //            .style("stroke", "gray");
-
-                                //        //var othercircles = $("circle").not("circle." + d.key);
-                                //        //d3.selectAll(othercircles).transition().duration(0.1)
-                                //        //    .style("opacity", 0.3)
-                                //        //    .style("stroke", "gray");
-                                //    })
-                                //    .on("mouseout", function (d) {
-                                //        d3.select(this)
-                                //            .attr("height", 10)
-                                //            .attr("width", 25)
-
-                                //        d3.select("path." + d.key).transition().duration(0.1)
-                                //            .style("stroke-width", function (d, i) {
-                                //                if (d.key != 'CENTROID_ID0') {
-                                //                    return "1px"
-                                //                }
-                                //                else {
-                                //                    return "4px"
-                                //                }
-
-                                //            })
-                                //            .style("stroke-linecap", "round")
-                                //            .style("stroke-linejoin", "round");
-
-                                //        //d3.selectAll("circle." + d.key).transition().duration(0.1)
-                                //        //    .attr("r", function (d, i) { return 2 })
-
-                                //        // Make the other lines normal again
-                                //        var otherlines = $('.line').not("path." + d.key);
-                                //        d3.selectAll(otherlines).transition().duration(0.1)
-                                //            .style("opacity", function (d, i) {
-                                //                if (d.key != 'CENTROID_ID0') {
-                                //                    return 0.5
-                                //                }
-                                //                else {
-                                //                    return 1
-                                //                }
-
-                                //            })
-                                //            .style("stroke-width", function (d, i) {
-                                //                if (d.key != 'CENTROID_ID0') {
-                                //                    return "1px"
-                                //                }
-                                //                else {
-                                //                    return "4px"
-                                //                }
-
-                                //            })
-                                //            .style("stroke", function (d, i) {
-                                //                if (d.key != 'CENTROID_ID0') {
-                                //                    return colors[1]
-                                //                }
-                                //                else {
-                                //                    return colors[0]
-                                //                }
-
-                                //            })
-                                //            .style("stroke-linecap", "round")
-                                //            .style("stroke-linejoin", "round");
-
-                                //        //var othercircles = $("circle").not("circle." + d.key);
-                                //        //d3.selectAll(othercircles).transition().duration(0.1)
-                                //        //    .style("opacity", 1)
-                                //        //    .style("stroke", function (d) { return color(dimKey(d)); });
-                                //    });
-
-                                //legend.append("text")
-                                //    .attr("class", "legendLabel")
-                                //    .attr("x", function (d) { return width + 130; })
-                                //    .attr("y", function (d, i) { return height - 342 + (i * 30); })
-                                //    .text(function (d) { return d.key; })
-                                //    .attr("font-size", "11px")
-                                //    .attr("fill", "black");
-
-
-                                // Get the maximum Y value
-                                function getMaxY() {
-                                    var maxY = -1;
                                     nested_data.forEach(function (d) {
-                                        if (d.visible === 1) {
-                                            d.values.forEach(function (d) {
-                                                if (d.FDVC_NORMALIZED > maxY) {
-                                                    maxY = d.FDVC_NORMALIZED;
-                                                }
-                                            });
-                                        }
+                                        d.visible = 1;
                                     });
-                                    return maxY;
-                                }
 
-                                // re-scale the Y axis
-                                function rescaleY() {
-                                    y.domain([0, getMaxY()]);
-                                    svg.select(".y").transition()
-                                        .duration(1000).ease("sin-in-out")
-                                        .call(yAxis);
-                                }
+                                    color.domain(data.map(function (d) {
+                                        return dimKey(d);
+                                    }));
 
-                                // Helper function for updating the lines after selecting/deselecting on the legend
-                                function updateLines() {
-                                    svg.selectAll(".line")
-                                        .transition().duration(500)
-                                        .delay(function (d, i) { return i * 20; })
+
+                                    var line = d3.svg.line()
+                                        .interpolate("linear")
+                                        .x(function (d) { return x(d.HOUR_NUM); })
+                                        .y(function (d) { return y(d.FDVC_NORMALIZED); });
+
+
+                                    x.domain(d3.extent(data, function (d) { return d.HOUR_NUM; }));
+                                    y.domain(d3.extent(data, function (d) { return d.FDVC_NORMALIZED; }));
+
+                                    svg.append("g")
+                                        .attr("class", "x axis")
+                                        .attr("transform", "translate(0," + height + ")")
+                                        .call(xAxis)
+                                        .selectAll("text")
+                                        .style("text-anchor", "end")
+                                        .attr("dx", "-.8em")
+                                        .attr("dy", ".15em")
+                                        .attr("transform", function (d) {
+                                            return "rotate(-65)"
+                                        })
+                                    svg.append("g")
+                                        .append("text")
+                                        .attr("transform", "translate(0," + height + ")")
+                                        .attr("y", 50)
+                                        .attr("x", width / 2)
+                                        .style("text-anchor", "middle")
+                                        .attr("size", "20px")
+                                        .text("Hour");
+
+                                    svg.append("g")
+                                        .attr("class", "y axis")
+                                        .call(yAxis)
+                                        .append("text")
+                                        .attr("transform", "rotate(-90)")
+                                        .attr("y", -50)
+                                        .attr("x", -height / 2)
+                                        .attr("dy", "0.76em")
+                                        .style("text-anchor", "middle")
+                                        .attr("size", "20px")
+                                        .text("FDVC Normalized");
+
+
+                                    // bind data to the lines
+                                    var lines = svg.selectAll(".lines")
+                                        .data(nested_data)
+                                        .enter().append("g")
+                                        .attr("class", "lines");
+
+                                    // Add the paths for the lines
+                                    lines.append("path")
+                                        .attr("class", function (d) {
+                                            if (d.key.substring(0, 8) != 'CENTROID') {
+                                                var e = d.key;
+                                                var k = e.replace(/[`~!#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/\s]/gi, '_');
+                                                return "line " + k;
+                                            }
+                                            else {
+                                                var e = "line " + d.key;
+                                                console.log(e);
+                                                return "line " + d.key;
+                                            }
+
+                                        })
                                         .attr("d", function (d) {
+                                            // our inner array is d.values from the nesting
                                             return line(d.values);
-                                        });
-                                }
+                                        })
+                                        .style("stroke", function (d, i) {
+                                            if (d.key.substring(0, 8) != 'CENTROID') {
+                                                return colors[1]
+                                            }
+                                            else {
+                                                return colors[0]
+                                            }
+                                        })
+                                        .style("stroke-width", function (d, i) {
+                                            if (d.key.substring(0, 8) != 'CENTROID') {
+                                                return "1px"
+                                            }
+                                            else {
+                                                return "4px"
+                                            }
+                                        })
+                                        .style("opacity", function (d, i) {
+                                            if (d.key.substring(0, 8) != 'CENTROID') {
+                                                return 0.5
+                                            }
+                                            else {
+                                                return 1
+                                            }
 
-                                function updateCircles() {
-                                    svg.selectAll(".circle circle")
-                                        .transition().duration(500)
-                                        .delay(function (d, i) { return i; })
-                                        .attr("cy", function (d, i) { return y(d.FDVC_NORMALIZED) });
+                                        })
+                                        .style("stroke-linejoin", "round")
+                                        .style("stroke-linecap", "round")
+                                        .attr("fill", "none")
+                                        .on("mouseover", function (d) {
+                                            // Make the line bold
+                                            console.log(this)
+                                            d3.select(this).transition()
+                                                .style("stroke-width", function (d, i) {
+                                                    if (d.key.substring(0, 8) != 'CENTROID') {
+                                                        return "2px"
+                                                    }
+                                                    else {
+                                                        return "6px"
+                                                    }
+
+                                                })
+                                                .style("stroke-linecap", "round")
+                                                .style("stroke-linejoin", "round");
+
+
+                                            // Fade out the other lines
+                                            var otherlines = $(".line").not("path." + d.key);
+                                            d3.selectAll(otherlines).transition()
+                                                .style("opacity", 0.1)
+                                                .style("stroke-width", function (d, i) {
+                                                    if (d.key.substring(0, 8) != 'CENTROID') {
+                                                        return "1px"
+                                                    }
+                                                    else {
+                                                        return "4px"
+                                                    }
+                                                })
+                                                .style("stroke-linecap", "round")
+                                                .style("stroke-linejoin", "round")
+                                                .style("stroke", "gray");
+
+
+                                            // Show tooltips
+                                            tooltipSummary.transition()
+                                                .style("opacity", 0.8);
+                                            tooltipSummary
+                                                .html(d.key)
+                                                .style("left", (d3.event.pageX + 10) + "px")
+                                                .style("top", (d3.event.pageY - 25) + "px");
+                                        })
+                                        .on("mouseout", function (d) {
+                                            // Make the line normal again
+                                            d3.select(this).transition()
+                                                .style("stroke-width", function (d, i) {
+                                                    if (d.key.substring(0, 8) != 'CENTROID') {
+                                                        return "1px"
+                                                    }
+                                                    else {
+                                                        return "4px"
+                                                    }
+
+                                                })
+                                                .style("stroke-linecap", "round")
+                                                .style("stroke-linejoin", "round");
+
+                                            // Make the other lines normal again
+                                            var otherlines = $('.line').not("path." + d.key);
+                                            d3.selectAll(otherlines).transition()
+                                                .style("opacity", function (d, i) {
+                                                    if (d.key.substring(0, 8) != 'CENTROID') {
+                                                        return 0.5
+                                                    }
+                                                    else {
+                                                        return 1
+                                                    }
+
+                                                })
+                                                .style("stroke-width", function (d, i) {
+                                                    if (d.key.substring(0, 8) != 'CENTROID') {
+                                                        return "1px"
+                                                    }
+                                                    else {
+                                                        return "4px"
+                                                    }
+
+                                                })
+                                                .style("stroke", function (d, i) {
+                                                    if (d.key.substring(0, 8) != 'CENTROID') {
+                                                        return colors[1]
+                                                    }
+                                                    else {
+                                                        return colors[0]
+                                                    }
+
+                                                })
+                                                .style("stroke-linecap", "round")
+                                                .style("stroke-linejoin", "round");
+
+                                            tooltipSummary.transition().duration(500).style("opacity", 0);
+                                        });
+
+
+
+                                    // Get the maximum Y value
+                                    function getMaxY() {
+                                        var maxY = -1;
+                                        nested_data.forEach(function (d) {
+                                            if (d.visible === 1) {
+                                                d.values.forEach(function (d) {
+                                                    if (d.FDVC_NORMALIZED > maxY) {
+                                                        maxY = d.FDVC_NORMALIZED;
+                                                    }
+                                                });
+                                            }
+                                        });
+                                        return maxY;
+                                    }
+
+                                    // re-scale the Y axis
+                                    function rescaleY() {
+                                        y.domain([0, getMaxY()]);
+                                        svg.select(".y").transition()
+                                            .duration(1000).ease("sin-in-out")
+                                            .call(yAxis);
+                                    }
+
+                                    // Helper function for updating the lines after selecting/deselecting on the legend
+                                    function updateLines() {
+                                        svg.selectAll(".line")
+                                            .transition().duration(500)
+                                            .delay(function (d, i) { return i * 20; })
+                                            .attr("d", function (d) {
+                                                return line(d.values);
+                                            });
+                                    }
+
+                                    function updateCircles() {
+                                        svg.selectAll(".circle circle")
+                                            .transition().duration(500)
+                                            .delay(function (d, i) { return i; })
+                                            .attr("cy", function (d, i) { return y(d.FDVC_NORMALIZED) });
+                                    }
+
+                                });
+
+                            }
+
+                            // Get/set the dimension key
+                            chart.dimKey = function (value) {
+                                if (!arguments.length) return dimKey;
+                                dimKey = value;
+                                return chart;
+                            };
+
+                            return chart;
+
+                        }
+
+                        var chart = multilineChart()
+                            .dimKey(function (d) {
+                                if (d.NAMA != 'CENTROID_ID0') {
+                                    return d.NAMA.replace(/[`~!#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/\s]/gi, '_');
+                                }
+                                else {
+                                    return d.NAMA;
                                 }
 
                             });
 
-                        }
+                        d3.select("#chart").datum(data).call(chart);
+                        
 
-                        // Get/set the dimension key
-                        chart.dimKey = function (value) {
-                            if (!arguments.length) return dimKey;
-                            dimKey = value;
-                            return chart;
-                        };
 
-                        return chart;
 
+                    },
+                    error: function (msg) {
+                        $("#result").text(msg);
+                    }
+                });
+            });
+        });
+        $(function () {
+            $('#btn').on('click', function () {
+                debugger
+                $("#tblCustomers").show();
+                var clusterVal = document.getElementById("Cluster").value;
+                var monthVal = document.getElementById("Month").value;
+                var yearVal = document.getElementById("YEAR").value;
+                $.ajax({
+                    type: "GET",
+                    cache: false,
+                    async: false,
+                    url: apiBaseUrl + 'api/GetCustomer/all/' + clusterVal + '/' + monthVal + '/' + yearVal,
+                    data: '{}',
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: OnSuccess,
+                    failure: function (response) {
+                        alert(response.d);
+                    },
+                    error: function (response) {
+                        alert(response.d);
                     }
 
-                    var chart = multilineChart()
-                        .dimKey(function (d) {
-                            if (d.IDREFPELANGGAN != 'CENTROID_ID0') {
-                                return "C" + d.IDREFPELANGGAN;
-                            }
-                            else {
-                                return d.IDREFPELANGGAN;
-                            }
-
-                        });
-
-                    d3.select("#chart").datum(data).call(chart);
-
-
-                },
-                error: function (msg) {
-                    $("#result").text(msg);
-                }
+                });
             });
+            function OnSuccess(response) {
+              
+                $("#tblCustomers").DataTable(
+                    {
+                        bLengthChange: true,
+                        lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
+                        bFilter: true,
+                        bSort: true,
+                        bPaginate: true,
+                        destroy: true,
+                        data: response,
+                        columns: [{ 'data': 'MONTH' },
+                        { 'data': 'YEAR' },
+                        { 'data': 'IDREFPELANGGAN' },
+                        { 'data': 'NAMA' },
+                        { 'data': 'CLUSTER_NUM' }]
+                    });
+            };
+        });
+        $("#btnPrint").on("click", function () {
+            debugger
+            var divsToHide = [document.getElementsByClassName("dataTables_length"), document.getElementsByClassName("dataTables_filter")]; //divsToHide is an array
+            //var divsToHide2 = document.getElementsByClassName("dataTables_filter"); //divsToHide is an array
+            for (var i = 0; i < 1; i++ ) {
+                for (var j = 0; j < divsToHide.length; j++) {
+                    divsToHide[j][i].style.visibility = "hidden"; // or
+                    divsToHide[j][i].style.display = "none"; // depending on what you're doing
+                }
+            }
+            document.getElementsByClassName('domain')[0].setAttribute('stroke', 'LightGray');
+            document.getElementsByClassName('domain')[1].setAttribute('stroke', 'LightGray');
+
+            //for (var i = 0; i < 22; i++) {
+            //    document.getElementsByClassName('tick')[i].setAttribute('stroke', 'Gainsboro')
+            //}
+            //for (var j = 0; j < divsToHide2.length; j++) {
+            //    divsToHide2[j].style.visibility = "hidden"; // or
+            //    divsToHide2[j].style.display = "none"; // depending on what you're doing
+            //}
+            var clusterVal = $("#Cluster").val();
+            var monthVal = $("#Month").val();
+            var yearVal = $("#YEAR").val();
+            var divContents = $("#form1").html();
+            var printWindow = window.open('', '', 'height=1400,width=1800');
+            printWindow.document.write('<html><head><title>Export to PDF on ' + monthVal + ' ' + yearVal + ', cluster ' + clusterVal + '</title>');
+            //printWindow.document.write('</head><body>');
+            printWindow.document.write(divContents);
+            printWindow.document.write('</body></html>');
+            printWindow.document.close();
+            printWindow.print();
         });
 
     </script>

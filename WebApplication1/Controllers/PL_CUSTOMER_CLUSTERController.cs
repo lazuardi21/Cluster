@@ -133,11 +133,11 @@ namespace Cluster.Controller
 
 		[Route("api/GetCustomer/all/{id}/{MONTH}/{YEAR}")]
 		[HttpGet]
-		public IQueryable<PL_CUSTOMER_CLUSTER4> GetCustomer(int id, string MONTH, int YEAR)
+		public IQueryable<PL_CUSTOMER_CLUSTER> GetCustomer(int id, string MONTH, int YEAR)
 		{
 
 			PL_CUSTOMER_CLUSTERRepository rep = new PL_CUSTOMER_CLUSTERRepository(connectionString);
-			List<PL_CUSTOMER_CLUSTER4> list = rep.GetCustomer(id, MONTH, YEAR);
+			List<PL_CUSTOMER_CLUSTER> list = rep.GetCustomer(id, MONTH, YEAR);
 			return list.AsQueryable();
 		}
 		

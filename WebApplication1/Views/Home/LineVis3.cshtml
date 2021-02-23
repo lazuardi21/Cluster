@@ -171,42 +171,35 @@
 
             // Create an export button'
             $('#export').on("click", svgToCanvas);
+            var w = 950, // or whatever your svg width is
+                h = 400;
+
+            // Create the export function - this will just export 
+            // the first svg element it finds
             function svgToCanvas() {
-                var pdf = new jsPDF('p', 'pt', 'a4');
-
-                pdf.addHTML(document.body.svg, function () {
-                    pdf.output('datauri');
-                });
-            }
-            //var w = 950, // or whatever your svg width is
-            //    h = 400;
-
-            //// Create the export function - this will just export 
-            //// the first svg element it finds
-            //function svgToCanvas() {
-            //    debugger
-            //    // Select the first svg element
+                debugger
+                // Select the first svg element
                
-            //    var svg = d3.select("svg")[0][0],
-            //        img = new Image(),
-            //        serializer = new XMLSerializer(),
-            //        svgStr = serializer.serializeToString(svg),
-            //        pdf = new jsPDF();
-            //    img.src = 'data:image/svg+xml;base64,' + window.btoa(svgStr);
+                var svg = d3.select("svg")[0][0],
+                    img = new Image(),
+                    serializer = new XMLSerializer(),
+                    svgStr = serializer.serializeToString(svg),
+                    pdf = new jsPDF();
+                img.src = 'data:image/svg+xml;base64,' + window.btoa(svgStr);
 
-            //    // You could also use the actual string without base64 encoding it:
-            //    //img.src = "data:image/svg+xml;utf8," + svgStr;
+                // You could also use the actual string without base64 encoding it:
+                //img.src = "data:image/svg+xml;utf8," + svgStr;
 
-            //    var canvas = document.createElement("canvas");
-            //    document.body.appendChild(canvas);
+                var canvas = document.createElement("canvas");
+                document.body.appendChild(canvas);
 
-            //    canvas.width = w;
-            //    canvas.height = h;
-            //    canvas.getContext("2d").drawImage(img, 1, 1, w, h);
-            //    //pdf.addImage(img, 'JPEG', 0, 0);
-            //    //pdf.save("download.pdf");
-            //    // Now save as png or whatever
-            //};
+                canvas.width = w;
+                canvas.height = h;
+                canvas.getContext("2d").drawImage(img, 1, 1, w, h);
+                //pdf.addImage(img, 'JPEG', 0, 0);
+                //pdf.save("download.pdf");
+                // Now save as png or whatever
+            };
            //myfunction();
            //function myfunction() {
            //     var tablewrap = document.getElementById('displaytable');

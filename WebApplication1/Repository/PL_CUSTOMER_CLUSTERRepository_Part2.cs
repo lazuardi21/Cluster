@@ -104,24 +104,24 @@ namespace Cluster.Repositories
 			return items;
 		}
 
-		public List<PL_CUSTOMER_CLUSTER4> GetCustomer(int ID, string MONTH, int YEAR)
+		public List<PL_CUSTOMER_CLUSTER> GetCustomer(int ID, string MONTH, int YEAR)
 		{
-			List<PL_CUSTOMER_CLUSTER4> items = new List<PL_CUSTOMER_CLUSTER4>();
+			List<PL_CUSTOMER_CLUSTER> items = new List<PL_CUSTOMER_CLUSTER>();
 			using (var conn = new SqlConnection(connString))
 			{
 				Message = "";
 				try
 				{
 					conn.Open();
-					SqlCommand command = new SqlCommand("SELECT [DATE_STAMP],[MONTH],[YEAR],[IDREFPELANGGAN],[NAMA],[CLUSTER_NUM]FROM [SIPG].[dbo].[VW_AA_DATAPELANGGAN_V1]  where CLUSTER_NUM = @ID and MONTH = @MONTH and YEAR = @YEAR", conn);
+					SqlCommand command = new SqlCommand("SELECT DISTINCT [DATE_STAMP],[MONTH],[YEAR],[IDREFPELANGGAN],[NAMA],[CLUSTER_NUM] FROM [SIPG].[dbo].[VW_AA_DATAPELANGGAN_V1]  where CLUSTER_NUM = @ID and MONTH = @MONTH and YEAR = @YEAR AND NAMA NOT LIKE '%CENTROID%' ORDER BY NAMA DESC", conn);
 					command.Parameters.AddWithValue("@ID", ID);
 					command.Parameters.AddWithValue("@MONTH", MONTH);
 					command.Parameters.AddWithValue("@YEAR", YEAR);
 					SqlDataReader reader = command.ExecuteReader();
-					PL_CUSTOMER_CLUSTER4 item = new PL_CUSTOMER_CLUSTER4();
+					PL_CUSTOMER_CLUSTER item = new PL_CUSTOMER_CLUSTER();
 					while (reader.Read())
 					{
-						item = new PL_CUSTOMER_CLUSTER4();
+						item = new PL_CUSTOMER_CLUSTER();
 						if (reader[0] != DBNull.Value) { item.DATE_STAMP = Convert.ToDateTime(reader[0]); }
 						if (reader[1] != DBNull.Value) { item.MONTH = Convert.ToString(reader[1]); }
 						if (reader[2] != DBNull.Value) { item.YEAR = Convert.ToInt32(reader[2]); }
