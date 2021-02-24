@@ -14,9 +14,9 @@
     <script src="~/Scripts/d3.js" charset="utf-8"></script>
     <script type="text/javascript" src="~/Scripts/jquery.dataTables.min.js" defer></script>
     <link href="~/Scripts/jquery.dataTables.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/Scripts/Cluster.css" rel="stylesheet" type="text/css" />
     <script type="text/javascript" src="~/Scripts/pdfmake.min.js" defer></script>
     <script type="text/javascript" src="~/Scripts/vfs_fonts.js" defer></script>
-    <script type="text/javascript" src="~/Scripts/Cluster.css" defer></script>
     <style>
         
     </style>
@@ -28,15 +28,15 @@
         <span>
             <label>Year:</label>
             <select size="1" id="YEAR" class="YEAR" title="" type="select" name="style">
-                <option value="2020" selected>2020</option>
-                <option value="2021">2021</option>
+                @*<option value="2020" selected>2020</option>
+                <option value="2021">2021</option>*@
             </select>
         </span>
 
         <span>
             <label>Month:</label>
             <select size="1" id="Month" class="Month" title="" type="select" name="style">
-                <option value="January">January</option>
+                @*<option value="January">January</option>
                 <option value="February">February</option>
                 <option value="March">March</option>
                 <option value="April">April</option>
@@ -47,7 +47,7 @@
                 <option value="Seprember">Seprember</option>
                 <option value="October" selected>October</option>
                 <option value="November">November</option>
-                <option value="December">December</option>
+                <option value="December">December</option>*@
             </select>
         </span>
         <span>
@@ -67,7 +67,7 @@
     <form id="form">
         <div id="chart" style="text-align: center"></div>
         <div>
-            <table id="tblCustomers" cellpadding="0" cellspacing="0" border="1" style="text-align: center" class="display" width="95%">
+            <table id="tblCustomers" cellpadding="0" cellspacing="0" border="1" style="margin-left: auto; margin-right: auto;" class="display" width="95%">
                 <thead>
                     <tr>
                         <th>Month</th>
@@ -120,6 +120,63 @@
 
         //var clusterVal = [];
         $(function () {
+
+            const monthNames = ["", "January", "February", "March", "April", "May", "June",
+                "July", "August", "September", "October", "November", "December"
+            ];
+            let qntYears = 4;
+            let selectYear = $("#YEAR");
+            let selectMonth = $("#Month");
+            let selectDay = $("#day");
+            let currentYear = new Date().getFullYear();
+
+            for (var y = 0; y < qntYears; y++) {
+                let date = new Date(currentYear);
+                let yearElem = document.createElement("option");
+                yearElem.value = currentYear
+                yearElem.textContent = currentYear;
+                selectYear.append(yearElem);
+                currentYear--;
+            }
+
+            for (var m = 1; m < 13; m++) {
+                let month = monthNames[m];
+                let monthElem = document.createElement("option");
+                monthElem.value = m;
+                monthElem.textContent = month;
+                selectMonth.append(monthElem);
+            }
+
+            var d = new Date();
+            var month = d.getMonth() + 1;
+            var year = d.getFullYear();
+            var day = d.getDate();
+
+            selectYear.val(year);
+            selectYear.on("change", AdjustDays);
+            selectMonth.val(month);
+            selectMonth.on("change", AdjustDays);
+
+            AdjustDays();
+            selectDay.val(day)
+
+            function AdjustDays() {
+                var year = selectYear.val();
+                var month = parseInt(selectMonth.val()) + 1;
+                selectDay.empty();
+
+                //get the last day, so the number of days in that month
+                var days = new Date(year, month, 0).getDate();
+
+                //lets create the days of that month
+                for (var d = 1; d <= days; d++) {
+                    var dayElem = document.createElement("option");
+                    dayElem.value = d;
+                    dayElem.textContent = d;
+                    selectDay.append(dayElem);
+                }
+            }
+
 
             $("#form").hide();
 
@@ -494,7 +551,6 @@
                 $.ajax({
                     type: "GET",
                     cache: false,
-                    async: false,
                     url: apiBaseUrl + 'api/GetCustomer/all/' + clusterVal + '/' + monthVal + '/' + yearVal,
                     data: '{}',
                     contentType: "application/json; charset=utf-8",
