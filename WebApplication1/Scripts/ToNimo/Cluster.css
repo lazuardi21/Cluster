@@ -1,0 +1,35 @@
+﻿svg text {
+    fill: black;
+    font: 12px sans-serif;
+    text-anchor: end;
+}
+
+svg {
+    align-content: center;
+}
+/* svg g text {
+            fill: black;
+            font: 20px sans-serif;
+            text-anchor: end;
+        }*/
+chart svg g .legend {
+    overflow: auto;
+    height: 200px;
+    width: 50px;
+}
+
+.axis path,
+.axis line {
+    fill: none;
+    stroke: grey;
+    stroke-width: 1;
+    shape-rendering: crispEdges;
+}
+
+.axis path,
+.axis line {
+    fill: none;
+    stroke: grey;
+    opacity: 0.1;
+    stroke-width: 3px;
+}

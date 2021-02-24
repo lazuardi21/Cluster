@@ -186,6 +186,8 @@
     <Content Include="JS\DataTable.js" />
     <Content Include="JS\GetData.js" />
     <Content Include="Scripts\bootstrap.js" />
+    <Content Include="Scripts\Cluster.css" />
+    <Content Include="Scripts\d3.js" />
     <Content Include="Scripts\d3.v6.js" />
     <Content Include="Scripts\d3.v6.min.js" />
     <Content Include="Scripts\bootstrap.min.js" />
@@ -223,7 +225,21 @@
     <Content Include="Scripts\jquery-3.5.1.min.js" />
     <Content Include="Scripts\jquery-3.5.1.slim.js" />
     <Content Include="Scripts\jquery-3.5.1.slim.min.js" />
+    <Content Include="Scripts\jquery.dataTables.min.css" />
+    <Content Include="Scripts\jquery.dataTables.min.js" />
+    <Content Include="Scripts\jquery.min.js" />
+    <Content Include="Scripts\jspdf.min.js" />
+    <Content Include="Scripts\pdfmake.min.js" />
+    <Content Include="Scripts\ToNimo\d3.js" />
+    <Content Include="Scripts\ToNimo\Cluster.css" />
+    <Content Include="Scripts\ToNimo\jquery.dataTables.min.js" />
+    <Content Include="Scripts\ToNimo\vfs_fonts.js" />
+    <Content Include="Scripts\ToNimo\pdfmake.min.js" />
+    <Content Include="Scripts\ToNimo\jspdf.min.js" />
+    <Content Include="Scripts\ToNimo\jquery.min.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
+    <Content Include="Scripts\ToNimo\jquery.dataTables.min.css" />
+    <Content Include="Scripts\vfs_fonts.js" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>

@@ -10,44 +10,15 @@
 <html>
 <head>
     <script src="~/Scripts/d3.v6.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.js" charset="utf-8"></script>
-    <script type="text/javascript" src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js" defer></script>
-    <link href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.min.css" rel="stylesheet" type="text/css" />
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js" defer></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js" defer></script>
+    <script src="~/Scripts/jquery.min.js"></script>
+    <script src="~/Scripts/d3.js" charset="utf-8"></script>
+    <script type="text/javascript" src="~/Scripts/jquery.dataTables.min.js" defer></script>
+    <link href="~/Scripts/jquery.dataTables.min.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" src="~/Scripts/pdfmake.min.js" defer></script>
+    <script type="text/javascript" src="~/Scripts/vfs_fonts.js" defer></script>
+    <script type="text/javascript" src="~/Scripts/Cluster.css" defer></script>
     <style>
-        svg text {
-            fill: black;
-            font: 12px sans-serif;
-            text-anchor: end;
-        }
-        /* svg g text {
-            fill: black;
-            font: 20px sans-serif;
-            text-anchor: end;
-        }*/
-        chart svg g .legend {
-            overflow: auto;
-            height: 200px;
-            width: 50px;
-        }
-
-        .axis path,
-        .axis line {
-            fill: none;
-            stroke: grey;
-            stroke-width: 1;
-            shape-rendering: crispEdges;
-        }
-
-        .axis path,
-        .axis line {
-            fill: none;
-            stroke: grey;
-            opacity: 0.1;
-            stroke-width: 3px;
-        }
+        
     </style>
 </head>
 <body>
@@ -93,10 +64,10 @@
         <button id="btn" class="btn-success">load data</button>
 
     </div>
-    <form id="form1">
-        <div id="chart"></div>
+    <form id="form">
+        <div id="chart" style="text-align: center"></div>
         <div>
-            <table id="tblCustomers" cellpadding="0" cellspacing="0" border="1" style="border-collapse:collapse" class="display" width="95%">
+            <table id="tblCustomers" cellpadding="0" cellspacing="0" border="1" style="text-align: center" class="display" width="95%">
                 <thead>
                     <tr>
                         <th>Month</th>
@@ -150,12 +121,13 @@
         //var clusterVal = [];
         $(function () {
 
-            $("#tblCustomers").hide();
+            $("#form").hide();
 
             $('#btn').on('click', function () {
                 //d3.selectAll(".svg").remove(); //removes event listeners and unmounts DOM elements
                 //svg = null;
                 d3.selectAll("div svg").remove();
+                $("#form").show();
 
                 var clusterVal = document.getElementById("Cluster").value;
                 var monthVal = document.getElementById("Month").value;
@@ -558,7 +530,25 @@
         });
         $("#btnPrint").on("click", function () {
             debugger
-            var divsToHide = [document.getElementsByClassName("dataTables_length"), document.getElementsByClassName("dataTables_filter")]; //divsToHide is an array
+            document.getElementsByClassName('domain')[0].setAttribute('stroke', 'LightGray');
+            document.getElementsByClassName('domain')[1].setAttribute('stroke', 'LightGray');
+
+            $("#tblCustomers").DataTable(
+                {
+                    bLengthChange: true,
+                    lengthMenu: [[-1], ["All"]],
+                    bFilter: true,
+                    bSort: true,
+                    bPaginate: true,
+                    destroy: true,
+                    columns: [{ 'data': 'MONTH' },
+                    { 'data': 'YEAR' },
+                    { 'data': 'IDREFPELANGGAN' },
+                    { 'data': 'NAMA' },
+                    { 'data': 'CLUSTER_NUM' }]
+                });
+
+            var divsToHide = [document.getElementsByClassName("dataTables_length"), document.getElementsByClassName("dataTables_filter"), document.getElementsByClassName("dataTables_info"), document.getElementsByClassName("dataTables_paginate paging_simple_numbers")]; //divsToHide is an array
             //var divsToHide2 = document.getElementsByClassName("dataTables_filter"); //divsToHide is an array
             for (var i = 0; i < 1; i++ ) {
                 for (var j = 0; j < divsToHide.length; j++) {
@@ -566,8 +556,43 @@
                     divsToHide[j][i].style.display = "none"; // depending on what you're doing
                 }
             }
-            document.getElementsByClassName('domain')[0].setAttribute('stroke', 'LightGray');
-            document.getElementsByClassName('domain')[1].setAttribute('stroke', 'LightGray');
+        
+            var slides = document.getElementsByClassName("tick");
+            for (var i = 1; i < slides.length; i++) {
+                document.getElementsByClassName('tick')[i].setAttribute('stroke', 'DarkGray')
+            }
+
+            setTimeout(function () {
+                var divsToHide = [document.getElementsByClassName("dataTables_length"), document.getElementsByClassName("dataTables_filter"), document.getElementsByClassName("dataTables_info"), document.getElementsByClassName("dataTables_paginate paging_simple_numbers")]; //divsToHide is an array
+                for (var i = 0; i < 1; i++) {
+                    for (var j = 0; j < divsToHide.length; j++) {
+                        divsToHide[j][i].removeAttribute("style");
+                        //divsToHide[j][i].style.visibility = false; // or
+                        //divsToHide[j][i].style.display = "inline"; // depending on what you're doing
+                    }
+                }
+                var slides = document.getElementsByClassName("tick");
+                for (var i = 1; i < slides.length; i++) {
+                    document.getElementsByClassName('tick')[i].removeAttribute('stroke')
+
+                }
+                $("#tblCustomers").DataTable(
+                    {
+                        bLengthChange: true,
+                        lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
+                        bFilter: true,
+                        bSort: true,
+                        bPaginate: true,
+                        destroy: true,
+                        
+                        columns: [{ 'data': 'MONTH' },
+                        { 'data': 'YEAR' },
+                        { 'data': 'IDREFPELANGGAN' },
+                        { 'data': 'NAMA' },
+                        { 'data': 'CLUSTER_NUM' }]
+                    });
+
+            }, 3000);
 
             //for (var i = 0; i < 22; i++) {
             //    document.getElementsByClassName('tick')[i].setAttribute('stroke', 'Gainsboro')
@@ -579,7 +604,7 @@
             var clusterVal = $("#Cluster").val();
             var monthVal = $("#Month").val();
             var yearVal = $("#YEAR").val();
-            var divContents = $("#form1").html();
+            var divContents = $("#form").html();
             var printWindow = window.open('', '', 'height=1400,width=1800');
             printWindow.document.write('<html><head><title>Export to PDF on ' + monthVal + ' ' + yearVal + ', cluster ' + clusterVal + '</title>');
             //printWindow.document.write('</head><body>');
