@@ -124,7 +124,12 @@ namespace WebApplication1.Controllers
             return View();
         }
 
-        
+        public ActionResult Python()
+        {
+            ViewBag.Title = "Python";
+
+            return View();
+        }
 
     }
 }
