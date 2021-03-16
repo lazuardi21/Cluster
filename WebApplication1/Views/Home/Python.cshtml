@@ -9,25 +9,35 @@
 <!doctype html>
 <html>
 <head>
-    <script src="~/Scripts/d3.v6.min.js"></script>
+
     <script src="~/Scripts/jquery.min.js"></script>
-    <script src="~/Scripts/d3.js" charset="utf-8"></script>
     <script type="text/javascript" src="~/Scripts/jquery.dataTables.min.js" defer></script>
     <link href="~/Scripts/jquery.dataTables.min.css" rel="stylesheet" type="text/css" />
-    <link href="~/Scripts/Cluster.css" rel="stylesheet" type="text/css" />
-    <script type="text/javascript" src="~/Scripts/pdfmake.min.js" defer></script>
-    <script type="text/javascript" src="~/Scripts/vfs_fonts.js" defer></script>
+
     <style>
         
     </style>
 </head>
 <body>
     <button id="exc-python" class="btn-success">Run Python</button>
+    @*<a href="file:D:\\Work\\PGN\\NIMO\\Python\\Run_Python_Script.bat" class="button">Go to Google</a>*@
+
+    <script>
+        $('#exc-python').on('click', function () {
+
+            $.ajax({
+                //url: '@Url.Action("Python", "Home")',
+                url: 'https://localhost:44375/api/Execute_Python',
+                data: ""
+            }).done(function () {
+                alert('Success');
+            });
+            //var wshShell = new ActiveXObject("WScript.Shell");
+            //wshShell.Run("file:D:\\Work\\PGN\\NIMO\\Python\\Run_Python_Script.bat");
+
+        })
+    </script>
 
 </body>
-<scripts>
-    $('#exc-python').on('click', function (){
 
-    })
-</scripts>
 </html>

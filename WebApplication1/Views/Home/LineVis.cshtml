@@ -12,13 +12,13 @@
     <script src="~/Scripts/d3.v6.min.js"></script>
     <script src="~/Scripts/jquery.min.js"></script>
     <script src="~/Scripts/d3.js" charset="utf-8"></script>
+    <script src="~/Scripts/ToNimo/pdfmake.min.js"></script>
+    <script type="text/javascript" src="~/Scripts/vfs_fonts.js" defer></script>
     <script type="text/javascript" src="~/Scripts/jquery.dataTables.min.js" defer></script>
     <link href="~/Scripts/jquery.dataTables.min.css" rel="stylesheet" type="text/css" />
     <link href="~/Scripts/Cluster.css" rel="stylesheet" type="text/css" />
-    <script type="text/javascript" src="~/Scripts/pdfmake.min.js" defer></script>
-    <script type="text/javascript" src="~/Scripts/vfs_fonts.js" defer></script>
+
     <style>
-        
     </style>
 </head>
 <body>
@@ -62,7 +62,8 @@
             </select>
         </span>
         <button id="btn" class="btn-success">load data</button>
-
+        <button id="btn2" class="btn-success">Call Python</button>
+        <button id="btn3" class="btn-success">Testing</button>
     </div>
     <form id="form">
         <div id="chart" style="text-align: center"></div>
@@ -82,13 +83,16 @@
         </div>
     </form>
     <script>
-        var apiBaseUrl = "https://localhost:44375/";
+        var apiBaseUrl = "http://localhost:44375/";
+        var apiBaseUrl2 = "http://192.168.5.208:8080/";
+        var apiBaseUrl3 = "http://localhost:8000/";
         var clusterVal = 0;
         var monthVal = 'October';
         var yearVal = 2020;
         var cluster = $('#Cluster').val;
         var month = $('#Month').val;
         var year = $('#YEAR').val;
+        var number = 7;
         var margin = { top: 30, right: 200, bottom: 70, left: 50 },
             width = 1200 - margin.left - margin.right,
             height = 500 - margin.top - margin.bottom;
@@ -98,6 +102,44 @@
             .append("g")
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
+        var jsonCallback = function (data) {
+            console.log(data);
+            //$('#data').html(JSON.stringify(data, null, 2));
+        };
+
+        $('#btn2').on('click', function () {
+            debugger
+            $.ajax({
+                type: "GET",
+                //url: apiBaseUrl2 + 'r/' + number,
+                url: apiBaseUrl2 + 'massUpload/2020-01-01/2020-02-01/All',
+                //cache: 'true',
+                //data: '{}',
+                dataType: "jsonp"
+            }).done(jsonCallback)
+                .fail(function (xhr) {
+                    alert("error" + xhr.responseText);
+                });
+        });
+
+        $('#btn3').on('click', function () {
+            debugger
+            $.ajax({
+                type: "GET",
+                //url: apiBaseUrl2 + 'r/' + number,
+                url: apiBaseUrl3 + '/test/1/2/3',
+                //cache: 'true',
+                //data: '{}',
+                dataType: "jsonp"
+            })
+                .done(function (data) {
+                console.log(data);
+                //$('#data').html(JSON.stringify(data, null, 2));
+            })
+                .fail(function (xhr) {
+                    alert("error" + xhr.responseText);
+                });
+        });
 
         $('#Cluster').on('change', function (e) {
             var optionSelected = $("option:selected", this);
